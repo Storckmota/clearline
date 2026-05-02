@@ -1,0 +1,39 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Next.js / build outputs
+.next/
+dist/
+build/
+out/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Secrets / keys
+*.pem
+*.key
+*.secret
+*keypair*.json
+payer-keypair.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / local
+.vscode/
+.idea/
+
+# Tool local state
+.agents/
+.antigravity/
