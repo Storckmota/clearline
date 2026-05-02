@@ -34,33 +34,33 @@ A task can only be marked `[x]` after checking the actual file, command, behavio
 
 ## 0.1 Existing Documentation
 
-- [ ] Verify `AGENTS.md` exists
-- [ ] Verify `AGENTS.md` matches the approved agent operating rules
-- [ ] Verify `agents/implementation.md` exists
-- [ ] Verify `agents/code-review.md` exists
-- [ ] Verify `agents/qa-acceptance.md` exists
-- [ ] Verify `agents/security-review.md` exists
-- [ ] Verify `agents/handoff.md` exists
-- [ ] Verify `agents/colosseum-review.md` exists
-- [ ] Verify `agents/ux-ui-review.md` exists
-- [ ] Verify `PROJECT.md` exists
-- [ ] Verify `PROJECT.md` matches the approved product definition
-- [ ] Verify `SPEC.md` exists
-- [ ] Verify `SPEC.md` matches `PROJECT.md` and `ARCHITECTURE.md`
-- [ ] Verify `ARCHITECTURE.md` exists
-- [ ] Verify `ARCHITECTURE.md` matches the approved architecture
-- [ ] Verify `ACCEPTANCE_CRITERIA.md` exists
-- [ ] Verify `ACCEPTANCE_CRITERIA.md` matches `SPEC.md` and the critical path in `TASKS.md`
-- [ ] Verify `TASKS.md` exists
-- [ ] Verify `TASKS.md` is valid Markdown
-- [ ] Verify all core docs are consistent: `AGENTS.md`, `PROJECT.md`, `SPEC.md`, `ARCHITECTURE.md`, `ACCEPTANCE_CRITERIA.md`, `TASKS.md`
+- [x] Verify `AGENTS.md` exists
+- [x] Verify `AGENTS.md` matches the approved agent operating rules
+- [x] Verify `agents/implementation.md` exists
+- [x] Verify `agents/code-review.md` exists
+- [x] Verify `agents/qa-acceptance.md` exists
+- [x] Verify `agents/security-review.md` exists
+- [x] Verify `agents/handoff.md` exists
+- [x] Verify `agents/colosseum-review.md` exists
+- [x] Verify `agents/ux-ui-review.md` exists
+- [x] Verify `PROJECT.md` exists
+- [x] Verify `PROJECT.md` matches the approved product definition
+- [x] Verify `SPEC.md` exists
+- [x] Verify `SPEC.md` matches `PROJECT.md` and `ARCHITECTURE.md`
+- [x] Verify `ARCHITECTURE.md` exists
+- [x] Verify `ARCHITECTURE.md` matches the approved architecture
+- [x] Verify `ACCEPTANCE_CRITERIA.md` exists
+- [x] Verify `ACCEPTANCE_CRITERIA.md` matches `SPEC.md` and the critical path in `TASKS.md`
+- [x] Verify `TASKS.md` exists
+- [x] Verify `TASKS.md` is valid Markdown
+- [x] Verify all core docs are consistent: `AGENTS.md`, `PROJECT.md`, `SPEC.md`, `ARCHITECTURE.md`, `ACCEPTANCE_CRITERIA.md`, `TASKS.md`
 - [ ] Verify `.env.local.example` exists
-- [ ] Verify `README.md` exists, even if placeholder
+- [x] Verify `README.md` exists, even if placeholder
 
 ## 0.2 Project Scaffold
 
-- [ ] Verify `clearline/` project folder exists
-- [ ] Verify Git repository is initialized
+- [x] Verify `clearline/` project folder exists
+- [x] Verify Git repository is initialized
 - [ ] Verify `package.json` exists
 - [ ] Verify Next.js project exists
 - [ ] Verify TypeScript config exists
@@ -69,12 +69,12 @@ A task can only be marked `[x]` after checking the actual file, command, behavio
 
 ## 0.3 Current File Audit
 
-- [ ] Check which files already exist in `app/`
-- [ ] Check which files already exist in `lib/`
-- [ ] Check which files already exist in `scripts/`
-- [ ] Check which files already exist in `supabase/`
-- [ ] Check which files already exist in `types/`
-- [ ] Update this `TASKS.md` to mark only verified completed tasks as `[x]`
+- [x] Check which files already exist in `app/`
+- [x] Check which files already exist in `lib/`
+- [x] Check which files already exist in `scripts/`
+- [x] Check which files already exist in `supabase/`
+- [x] Check which files already exist in `types/`
+- [x] Update this `TASKS.md` to mark only verified completed tasks as `[x]`
 
 ## 0.4 Completion Rule
 
