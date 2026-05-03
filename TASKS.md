@@ -424,13 +424,13 @@ Tasks:
 ## 2.3 Supabase Setup
 
 - [ ] Create Supabase project
-- [ ] Create `supabase/migrations/001_init.sql`
-- [ ] Create `receivables` table
-- [ ] Create `transactions` table
-- [ ] Add unique index on `transactions.signature`
-- [ ] Add index on `transactions.receivable_id`
-- [ ] Add index on `receivables.reference_pubkey`
-- [ ] Confirm migration runs successfully
+- [x] Create `supabase/migrations/001_init.sql` (Note: Created as `20260503000000_init.sql` — Supabase CLI requires timestamped filenames; `001_init.sql` is not a valid CLI migration name)
+- [x] Create `receivables` table
+- [x] Create `transactions` table
+- [x] Add unique index on `transactions.signature`
+- [x] Add index on `transactions.receivable_id`
+- [x] Add index on `receivables.reference_pubkey`
+- [x] Confirm migration runs successfully
 
 ## 2.4 Supabase Client
 
