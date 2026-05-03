@@ -492,11 +492,11 @@ Create:
 
 Tasks:
 
-- [ ] Convert human-readable USDC to raw base units
-- [ ] Convert raw base units to human-readable USDC
-- [ ] Avoid floating point comparisons
-- [ ] Use USDC 6 decimals
-- [ ] Add basic checks for amount conversion
+- [x] Convert human-readable USDC to raw base units
+- [x] Convert raw base units to human-readable USDC
+- [x] Avoid floating point comparisons
+- [x] Use USDC 6 decimals
+- [x] Add basic checks for amount conversion
 
 ## 3.2 Classification Engine
 
