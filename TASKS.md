@@ -605,11 +605,11 @@ Minimal list endpoint.
 
 Tasks:
 
-- [ ] Implement `GET /api/receivables`
-- [ ] Return all expected payments
-- [ ] Return linked transactions if available
-- [ ] Compute overdue display status on read
-- [ ] Do not write overdue status to DB
+- [x] Implement `GET /api/receivables`
+- [x] Return all expected payments
+- [x] Return linked transactions if available
+- [x] Compute overdue display status on read
+- [x] Do not write overdue status to DB
 
 ---
 

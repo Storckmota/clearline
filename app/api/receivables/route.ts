@@ -8,6 +8,66 @@ import { supabaseAdmin } from "../../../lib/supabase";
 export const runtime = "nodejs";
 
 // ---------------------------------------------------------------------------
+// GET /api/receivables?merchant_wallet=<base58>
+// Returns all receivables for the given merchant wallet, with linked
+// transactions and a computed display_status (overdue is display-only).
+// ---------------------------------------------------------------------------
+
+export async function GET(req: NextRequest) {
+  // --- Validate merchant_wallet query param ---------------------------------
+  const raw = req.nextUrl.searchParams.get("merchant_wallet");
+
+  if (!raw || raw.trim() === "") {
+    return NextResponse.json(
+      { error: "merchant_wallet query param is required." },
+      { status: 400 }
+    );
+  }
+
+  let merchantPubkey: PublicKey;
+  try {
+    merchantPubkey = new PublicKey(raw.trim());
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid merchant_wallet: must be a valid Solana public key." },
+      { status: 400 }
+    );
+  }
+
+  // --- Query Supabase -------------------------------------------------------
+  const { data, error } = await supabaseAdmin
+    .from("receivables")
+    .select(
+      `id, merchant_wallet, label, expected_amount_raw, due_date,
+       reference_pubkey, solana_pay_url, status, created_at,
+       transactions (
+         id, signature, amount_raw, status, classification_reason,
+         sender_wallet, recipient_wallet, mint, reference_pubkey,
+         observed_at, created_at
+       )`
+    )
+    .eq("merchant_wallet", merchantPubkey.toBase58())
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("[GET /api/receivables] Supabase query failed:", error.code);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+
+  // --- Compute display_status (overdue is display-only, never written to DB) -
+  const now = new Date();
+  const receivables = (data ?? []).map((r) => ({
+    ...r,
+    display_status:
+      r.status === "pending" && r.due_date && new Date(r.due_date) < now
+        ? "overdue"
+        : r.status,
+  }));
+
+  return NextResponse.json({ receivables }, { status: 200 });
+}
+
+// ---------------------------------------------------------------------------
 // POST /api/receivables
 // Creates an expected USDC payment and returns the receivable + Solana Pay URL.
 // ---------------------------------------------------------------------------
