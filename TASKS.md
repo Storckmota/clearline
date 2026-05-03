@@ -416,10 +416,10 @@ PAYER_KEYPAIR_PATH=
 
 Tasks:
 
-- [ ] Add `.env.local.example`
-- [ ] Keep all values empty except static mint values
-- [ ] Do not commit `.env.local`
-- [ ] Document that `PAYER_KEYPAIR_PATH` is script-only
+- [x] Add `.env.local.example`
+- [x] Keep all values empty except static mint values
+- [x] Do not commit `.env.local`
+- [x] Document that `PAYER_KEYPAIR_PATH` is script-only
 
 ## 2.3 Supabase Setup
 
