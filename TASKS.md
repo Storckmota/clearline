@@ -550,12 +550,12 @@ Required example reasons:
 
 Classifier checks are required.
 
-- [ ] Add minimal tests or script checks for `classify()`
-- [ ] Verify `paid`
-- [ ] Verify `partial`
-- [ ] Verify `overpaid`
-- [ ] Verify `duplicate`
-- [ ] Verify `unknown`
+- [x] Add minimal tests or script checks for `classify()`
+- [x] Verify `paid`
+- [x] Verify `partial`
+- [x] Verify `overpaid`
+- [x] Verify `duplicate`
+- [x] Verify `unknown`
 
 No heavy test framework required if it slows development.
 
