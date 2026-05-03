@@ -523,28 +523,28 @@ Statuses:
 
 Tasks:
 
-- [ ] Implement `paid`
-- [ ] Implement `partial`
-- [ ] Implement `overpaid`
-- [ ] Implement `duplicate`
-- [ ] Implement `unknown`
+- [x] Implement `paid`
+- [x] Implement `partial`
+- [x] Implement `overpaid`
+- [x] Implement `duplicate`
+- [x] Implement `unknown`
 
 Rules, in order:
 
-- [ ] No receivable → `unknown`
-- [ ] Receivable already paid → `duplicate`
-- [ ] Exact amount → `paid`
-- [ ] Less than expected → `partial`
-- [ ] More than expected → `overpaid`
+- [x] No receivable → `unknown`
+- [x] Receivable already paid → `duplicate`
+- [x] Exact amount → `paid`
+- [x] Less than expected → `partial`
+- [x] More than expected → `overpaid`
 
 Every classification must include `classification_reason`.
 
 Required example reasons:
 
-- [ ] `Exact match: expected 100 USDC, received 100 USDC, reference matched.`
-- [ ] `Partial: expected 100 USDC, received 60 USDC, reference matched.`
-- [ ] `Unknown: no matching Solana Pay reference found.`
-- [ ] `Duplicate: expected payment already marked paid.`
+- [x] `Exact match: expected 100 USDC, received 100 USDC, reference matched.`
+- [x] `Partial: expected 100 USDC, received 60 USDC, reference matched.`
+- [x] `Unknown: no matching Solana Pay reference found.`
+- [x] `Duplicate: expected payment already marked paid.`
 
 ## 3.3 Classifier Checks
 
