@@ -333,11 +333,11 @@ No styling polish until the data path works.
 
 Install only necessary dependencies:
 
-- [ ] Install `@solana/web3.js`
-- [ ] Install `@solana/pay`
-- [ ] Install `@solana/spl-token`
-- [ ] Install `@supabase/supabase-js`
-- [ ] Install `bignumber.js`
+- [x] Install `@solana/web3.js`
+- [x] Install `@solana/pay`
+- [x] Install `@solana/spl-token`
+- [x] Install `@supabase/supabase-js`
+- [x] Install `bignumber.js`
 
 Do not add unnecessary UI, auth, analytics, or backend frameworks.
 
