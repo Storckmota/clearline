@@ -628,8 +628,8 @@ The formal reusable transfer script will be built in Phase 6.
 
 Tasks:
 
-- [ ] Create expected payment through `POST /api/receivables`
-- [ ] Generate Solana Pay URL
+- [x] Create expected payment through `POST /api/receivables`
+- [x] Generate Solana Pay URL
 - [ ] Send devnet USDC payment with reference
 - [ ] Confirm transaction lands on devnet
 - [ ] Confirm reference appears in transaction account keys
