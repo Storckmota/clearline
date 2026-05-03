@@ -567,14 +567,14 @@ Create:
 
 Tasks:
 
-- [ ] Generate reference public key using `Keypair.generate().publicKey`
-- [ ] Store only public key as `reference_pubkey`
-- [ ] Do not store private key
-- [ ] Generate Solana Pay URL with recipient wallet
-- [ ] Include human-readable USDC amount
+- [x] Generate reference public key using `Keypair.generate().publicKey`
+- [x] Store only public key as `reference_pubkey`
+- [x] Do not store private key
+- [x] Generate Solana Pay URL with recipient wallet
+- [x] Include human-readable USDC amount
 - [ ] Include USDC mint from config
-- [ ] Include reference public key
-- [ ] Include label
+- [x] Include reference public key
+- [x] Include label
 
 ---
 

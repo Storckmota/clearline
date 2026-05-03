@@ -16,7 +16,6 @@ export interface SolanaPayUrlParams {
   /**
    * Human-readable USDC amount as a decimal string.
    * e.g. "1" for 1 USDC, "100" for 100 USDC.
-   * BigNumber is constructed internally to avoid cross-module type conflicts.
    */
   amount: string;
   /** USDC mint public key for the active network. */
@@ -41,10 +40,7 @@ export function buildSolanaPayUrl(params: SolanaPayUrlParams): URL {
   const { recipient, amount, splToken, reference, label, message } = params;
   return encodeURL({
     recipient,
-    // BigNumber is constructed here to avoid the cross-module private-field
-    // type conflict between bignumber.js@11 and the copy bundled in @solana/pay.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    amount: new BigNumber(amount) as any,
+    amount: new BigNumber(amount),
     splToken,
     reference,
     label,
