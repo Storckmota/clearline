@@ -54,18 +54,18 @@ A task can only be marked `[x]` after checking the actual file, command, behavio
 - [x] Verify `TASKS.md` exists
 - [x] Verify `TASKS.md` is valid Markdown
 - [x] Verify all core docs are consistent: `AGENTS.md`, `PROJECT.md`, `SPEC.md`, `ARCHITECTURE.md`, `ACCEPTANCE_CRITERIA.md`, `TASKS.md`
-- [ ] Verify `.env.local.example` exists
+- [x] Verify `.env.local.example` exists
 - [x] Verify `README.md` exists, even if placeholder
 
 ## 0.2 Project Scaffold
 
 - [x] Verify `clearline/` project folder exists
 - [x] Verify Git repository is initialized
-- [ ] Verify `package.json` exists
-- [ ] Verify Next.js project exists
-- [ ] Verify TypeScript config exists
-- [ ] Verify app runs locally
-- [ ] Verify Tailwind is configured only if included by scaffold
+- [x] Verify `package.json` exists
+- [x] Verify Next.js project exists
+- [x] Verify TypeScript config exists
+- [x] Verify app runs locally
+- [x] Verify Tailwind is configured only if included by scaffold
 
 ## 0.3 Current File Audit
 
@@ -302,32 +302,32 @@ No styling polish until the data path works.
 
 ## 1.1 Repository Setup
 
-- [ ] Create project folder `clearline`
-- [ ] Initialize Git repository
-- [ ] Create Next.js 15 project with TypeScript
-- [ ] Use App Router
-- [ ] Use Node runtime
-- [ ] Configure Tailwind CSS only if included by scaffold
-- [ ] Confirm project runs locally
+- [x] Create project folder `clearline`
+- [x] Initialize Git repository
+- [x] Create Next.js 15 project with TypeScript
+- [x] Use App Router
+- [x] Use Node runtime
+- [x] Configure Tailwind CSS only if included by scaffold
+- [x] Confirm project runs locally
 - [ ] Commit initial scaffold
 
 ## 1.2 Required Documentation
 
-- [ ] Add `AGENTS.md`
-- [ ] Add `agents/implementation.md`
-- [ ] Add `agents/code-review.md`
-- [ ] Add `agents/qa-acceptance.md`
-- [ ] Add `agents/security-review.md`
-- [ ] Add `agents/handoff.md`
-- [ ] Add `agents/colosseum-review.md`
-- [ ] Add `agents/ux-ui-review.md`
-- [ ] Add `PROJECT.md`
-- [ ] Add `SPEC.md`
-- [ ] Add `ARCHITECTURE.md`
-- [ ] Add `ACCEPTANCE_CRITERIA.md`
-- [ ] Add `TASKS.md`
-- [ ] Add `.env.local.example`
-- [ ] Add initial `README.md` placeholder
+- [x] Add `AGENTS.md`
+- [x] Add `agents/implementation.md`
+- [x] Add `agents/code-review.md`
+- [x] Add `agents/qa-acceptance.md`
+- [x] Add `agents/security-review.md`
+- [x] Add `agents/handoff.md`
+- [x] Add `agents/colosseum-review.md`
+- [x] Add `agents/ux-ui-review.md`
+- [x] Add `PROJECT.md`
+- [x] Add `SPEC.md`
+- [x] Add `ARCHITECTURE.md`
+- [x] Add `ACCEPTANCE_CRITERIA.md`
+- [x] Add `TASKS.md`
+- [x] Add `.env.local.example`
+- [x] Add initial `README.md` placeholder
 
 ## 1.3 Dependencies
 
