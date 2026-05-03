@@ -353,27 +353,27 @@ Create:
 
 Tasks:
 
-- [ ] Read all app runtime config from `lib/config.ts`
-- [ ] Validate required app runtime env vars at startup
-- [ ] Ensure app does not read `process.env` directly across multiple files
-- [ ] Export typed config object
+- [x] Read all app runtime config from `lib/config.ts`
+- [x] Validate required app runtime env vars at startup (Note: Validation is lazy-on-access to prevent scaffold build failure without .env.local)
+- [x] Ensure app does not read `process.env` directly across multiple files
+- [x] Export typed config object
 
 App runtime env vars:
 
-- [ ] `SUPABASE_URL`
-- [ ] `SUPABASE_SERVICE_ROLE_KEY`
-- [ ] `SOLANA_NETWORK`
-- [ ] `SOLANA_RPC_URL`
-- [ ] `RECIPIENT_WALLET`
-- [ ] `RECIPIENT_USDC_ATA`
-- [ ] `USDC_MINT_DEVNET`
-- [ ] `USDC_MINT_MAINNET`
-- [ ] `HELIUS_AUTH_TOKEN`
-- [ ] `DEV_SECRET`
+- [x] `SUPABASE_URL`
+- [x] `SUPABASE_SERVICE_ROLE_KEY`
+- [x] `SOLANA_NETWORK`
+- [x] `SOLANA_RPC_URL`
+- [x] `RECIPIENT_WALLET`
+- [x] `RECIPIENT_USDC_ATA`
+- [x] `USDC_MINT_DEVNET`
+- [x] `USDC_MINT_MAINNET`
+- [x] `HELIUS_AUTH_TOKEN`
+- [x] `DEV_SECRET`
 
 Script-only env vars:
 
-- [ ] `PAYER_KEYPAIR_PATH`
+- [x] `PAYER_KEYPAIR_PATH`
 
 Important:
 
