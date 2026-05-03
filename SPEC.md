@@ -438,11 +438,13 @@ A transfer is valid for Clearline ingestion only if:
 
 - it is a token transfer
 - mint equals the configured USDC mint for the active network
-- recipient is the monitored wallet or monitored USDC ATA
+- recipient is the merchant wallet or its derived USDC ATA
 - amount is greater than zero
 - transaction signature exists
 
-Non-USDC transfers and transfers not sent to the monitored wallet/ATA are ignored for MVP.
+The merchant wallet is the connected wallet. It is stored on each receivable as `merchant_wallet`. The USDC ATA is derived dynamically from the merchant wallet and the USDC mint. There is no fixed app-level `RECIPIENT_WALLET` env var required at runtime.
+
+Non-USDC transfers and transfers not sent to the merchant wallet/ATA are ignored for MVP.
 
 If a webhook payload contains no valid incoming USDC transfer, Clearline returns success and does not create a transaction record.
 
@@ -566,7 +568,7 @@ If a webhook payload contains no valid incoming USDC transfer:
 
 - Demo runs on Solana Devnet
 - Architecture is mainnet-ready by configuration
-- One monitored wallet
+- One merchant wallet per session (the connected wallet)
 - One USDC mint per network
 - One expected payment reference per expected payment
 - Supabase is the application source of truth
@@ -574,6 +576,7 @@ If a webhook payload contains no valid incoming USDC transfer:
 - UI reads from Supabase, not directly from RPC
 - Helius webhook delivery may be delayed
 - Replay endpoint exists for demo insurance
+- Helius webhook monitors a specific wallet address; if the connected wallet differs from the Helius-configured wallet, webhook delivery will not occur for that wallet (see Helius dynamic monitoring risk in ARCHITECTURE.md)
 
 ---
 

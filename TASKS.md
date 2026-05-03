@@ -364,8 +364,8 @@ App runtime env vars:
 - [x] `SUPABASE_SERVICE_ROLE_KEY`
 - [x] `SOLANA_NETWORK`
 - [x] `SOLANA_RPC_URL`
-- [x] `RECIPIENT_WALLET`
-- [x] `RECIPIENT_USDC_ATA`
+- [x] `RECIPIENT_WALLET` (optional dev/demo fallback — connected wallet is primary)
+- [x] `RECIPIENT_USDC_ATA` (optional dev/demo fallback — ATA is derived dynamically)
 - [x] `USDC_MINT_DEVNET`
 - [x] `USDC_MINT_MAINNET`
 - [x] `HELIUS_AUTH_TOKEN`
@@ -445,14 +445,32 @@ Tasks:
 - [x] Do not add auth
 - [x] Do not add RLS
 
-## 2.5 USDC ATA Verification
+## 2.5 Architecture Correction — Merchant Wallet Model
 
-Before Helius setup:
+The connected wallet is the merchant wallet. `RECIPIENT_WALLET` and `RECIPIENT_USDC_ATA` are no longer required app runtime config.
 
-- [ ] Derive `RECIPIENT_USDC_ATA` from `RECIPIENT_WALLET` + USDC mint
-- [ ] Confirm env value matches derived ATA
-- [ ] Create receiving USDC ATA if missing
-- [ ] Document command or script used to verify ATA
+Completed corrections:
+
+- [x] `lib/config.ts`: `RECIPIENT_WALLET` changed from `requireEnv` to `optionalEnv`
+- [x] `lib/config.ts`: `RECIPIENT_USDC_ATA` changed from `requireEnv` to `optionalEnv`
+- [x] `.env.local.example`: both marked as optional dev/demo fallback
+- [x] `ARCHITECTURE.md`: updated schema, Solana Pay flow, Helius flow, env vars
+- [x] `SPEC.md`: updated valid transfer definition and assumptions
+- [x] New migration: `supabase/migrations/20260503000001_add_merchant_wallet.sql`
+  - `merchant_wallet text NOT NULL` added to `receivables`
+  - `CHECK (merchant_wallet <> '')` constraint added
+  - `receivables_merchant_wallet_idx` index added
+
+Not yet implemented (future tasks):
+
+- [ ] Wallet adapter integration (connects merchant wallet)
+- [ ] Dynamic ATA derivation in Solana Pay URL generation
+- [ ] Ingestion pipeline uses `receivable.merchant_wallet` for recipient validation
+- [x] Apply migration `20260503000001_add_merchant_wallet.sql` to remote database
+
+Risks:
+
+- Helius webhooks monitor specific wallet addresses configured in the dashboard. If the connected wallet differs from the Helius-configured wallet, webhook delivery will not occur. For MVP demo, configure Helius to monitor the demo wallet. Future enhancement: use Helius API to dynamically manage monitored addresses.
 
 ---
 

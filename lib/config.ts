@@ -14,13 +14,19 @@ function requireEnv(name: string): string {
   return value;
 }
 
+function optionalEnv(name: string): string | undefined {
+  return process.env[name] || undefined;
+}
+
 export const config = {
   get SUPABASE_URL() { return requireEnv('SUPABASE_URL'); },
   get SUPABASE_SERVICE_ROLE_KEY() { return requireEnv('SUPABASE_SERVICE_ROLE_KEY'); },
   get SOLANA_NETWORK() { return requireEnv('SOLANA_NETWORK'); },
   get SOLANA_RPC_URL() { return requireEnv('SOLANA_RPC_URL'); },
-  get RECIPIENT_WALLET() { return requireEnv('RECIPIENT_WALLET'); },
-  get RECIPIENT_USDC_ATA() { return requireEnv('RECIPIENT_USDC_ATA'); },
+  /** Optional dev/demo fallback. The connected wallet is the primary merchant wallet. */
+  get RECIPIENT_WALLET() { return optionalEnv('RECIPIENT_WALLET'); },
+  /** Optional dev/demo fallback. ATA is derived dynamically from connected wallet + USDC mint. */
+  get RECIPIENT_USDC_ATA() { return optionalEnv('RECIPIENT_USDC_ATA'); },
   get USDC_MINT_DEVNET() { return requireEnv('USDC_MINT_DEVNET'); },
   get USDC_MINT_MAINNET() { return requireEnv('USDC_MINT_MAINNET'); },
   get HELIUS_AUTH_TOKEN() { return requireEnv('HELIUS_AUTH_TOKEN'); },

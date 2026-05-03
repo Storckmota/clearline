@@ -248,6 +248,9 @@ No auth. No RLS. All DB access happens server-side using the service role key.
 create table receivables (
   id uuid primary key default gen_random_uuid(),
 
+  merchant_wallet text not null
+    check (merchant_wallet <> ''),
+
   label text not null,
 
   expected_amount_raw bigint not null,
@@ -266,6 +269,8 @@ create table receivables (
 
 Notes:
 
+- `merchant_wallet` is the connected wallet that created the expected payment.
+- The USDC ATA for the merchant wallet is derived dynamically using `getAssociatedTokenAddress(USDC_MINT, merchant_wallet)`.
 - `expected_amount_raw` stores USDC base units.
 - Devnet USDC uses 6 decimals.
 - 100 USDC = 100000000.
@@ -324,17 +329,19 @@ Devnet USDC mint:
 Solana Pay URL:
 
 ```
-solana:<RECIPIENT_WALLET>
+solana:<MERCHANT_WALLET>
   ?amount=<human_readable_usdc>
   &spl-token=<USDC_MINT>
   &reference=<reference_pubkey>
   &label=<label>
 ```
 
+`<MERCHANT_WALLET>` is the connected wallet stored as `receivable.merchant_wallet`, not a fixed env var.
+
 Example:
 
 ```
-solana:RecipientWalletPubkey
+solana:MerchantWalletPubkey
   ?amount=100
   &spl-token=4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU
   &reference=ReferencePubkey
@@ -357,8 +364,12 @@ Use Helius `enhancedDevnet` webhook.
 
 Webhook monitors:
 
-- monitored receiving wallet
-- monitored receiving wallet USDC associated token account
+- merchant wallet address
+- merchant wallet USDC associated token account
+
+The merchant wallet is the connected wallet stored on each receivable. The USDC ATA is derived dynamically from the merchant wallet and the USDC mint.
+
+Helius dynamic monitoring risk: Helius webhooks are configured to monitor specific wallet addresses. If the connected wallet at runtime differs from the wallet configured in the Helius dashboard, webhook delivery will not occur for that wallet. For the MVP demo, the Helius webhook must be configured to monitor the wallet that will be used during the demo. A future enhancement could use the Helius API to dynamically add/remove monitored addresses.
 
 The endpoint must be public HTTPS.
 
@@ -648,7 +659,7 @@ Mainnet-readiness means:
 - network selected by env var
 - webhook type selected by env var
 - RPC URL selected by env var
-- recipient wallet selected by env var
+- recipient wallet selected by env var or connected wallet
 
 Submission language:
 
@@ -832,6 +843,8 @@ SUPABASE_SERVICE_ROLE_KEY=
 # Solana
 SOLANA_NETWORK=devnet
 SOLANA_RPC_URL=https://devnet.helius-rpc.com/?api-key=YOUR_KEY
+
+# Optional dev/demo fallback — the connected wallet is the primary merchant wallet
 RECIPIENT_WALLET=
 RECIPIENT_USDC_ATA=
 
@@ -846,6 +859,8 @@ HELIUS_AUTH_TOKEN=
 DEV_SECRET=
 ```
 
+`RECIPIENT_WALLET` and `RECIPIENT_USDC_ATA` are optional dev/demo fallback values. They are not required for app runtime. The connected wallet is the primary merchant wallet. The USDC ATA is derived dynamically.
+
 `.env.local.example`:
 
 ```bash
@@ -855,6 +870,7 @@ SUPABASE_SERVICE_ROLE_KEY=
 SOLANA_NETWORK=devnet
 SOLANA_RPC_URL=https://devnet.helius-rpc.com/?api-key=YOUR_KEY
 
+# Optional dev/demo fallback — the connected wallet is the primary merchant wallet
 RECIPIENT_WALLET=
 RECIPIENT_USDC_ATA=
 
@@ -867,7 +883,9 @@ DEV_SECRET=
 
 Notes:
 
-- `RECIPIENT_USDC_ATA` must be pre-created on-chain before the demo. Derive with `getAssociatedTokenAddress(USDC_MINT, RECIPIENT_WALLET)` from `@solana/spl-token`.
+- `RECIPIENT_WALLET` and `RECIPIENT_USDC_ATA` are optional. The connected wallet provides the merchant wallet at runtime.
+- For scripts (e.g., `scripts/send-devnet-usdc.ts`), the receiving wallet can use `RECIPIENT_WALLET` from env as a convenience.
+- The USDC ATA is derived dynamically using `getAssociatedTokenAddress(USDC_MINT, merchant_wallet)` from `@solana/spl-token`.
 - `HELIUS_AUTH_TOKEN` is an arbitrary string set in the Helius webhook dashboard under "Auth Header". Clearline verifies `req.headers.authorization === HELIUS_AUTH_TOKEN`.
 - `SOLANA_RPC_URL` must point to the Helius RPC endpoint, not `api.devnet.solana.com`, to avoid rate limits during the demo.
 - Do not commit `.env.local`. Commit only `.env.local.example` with empty values.
