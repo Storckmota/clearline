@@ -440,10 +440,10 @@ Create:
 
 Tasks:
 
-- [ ] Use service role key server-side only
-- [ ] Do not expose service role key to client
-- [ ] Do not add auth
-- [ ] Do not add RLS
+- [x] Use service role key server-side only
+- [x] Do not expose service role key to client
+- [x] Do not add auth
+- [x] Do not add RLS
 
 ## 2.5 USDC ATA Verification
 
