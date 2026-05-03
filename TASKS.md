@@ -463,8 +463,9 @@ Completed corrections:
 
 Not yet implemented (future tasks):
 
-- [ ] Wallet adapter integration (connects merchant wallet)
-- [ ] Dynamic ATA derivation in Solana Pay URL generation
+- [x] Wallet adapter integration (connects merchant wallet)
+- [x] Dynamic ATA derivation (utility + display proof)
+- [ ] Solana Pay URL generation using derived ATA
 - [ ] Ingestion pipeline uses `receivable.merchant_wallet` for recipient validation
 - [x] Apply migration `20260503000001_add_merchant_wallet.sql` to remote database
 
