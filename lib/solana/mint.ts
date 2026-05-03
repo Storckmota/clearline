@@ -4,11 +4,18 @@ import { PublicKey } from "@solana/web3.js";
 import { config } from "../config";
 import type { SolanaNetwork } from "./constants";
 
+const VALID_NETWORKS: readonly SolanaNetwork[] = ["devnet", "mainnet-beta"];
+
 /**
  * Returns the active Solana network from server-side config.
+ * Throws loudly if SOLANA_NETWORK is missing or not a recognized value.
  */
 export function getNetwork(): SolanaNetwork {
-  return config.SOLANA_NETWORK as SolanaNetwork;
+  const raw = config.SOLANA_NETWORK;
+  if (!VALID_NETWORKS.includes(raw as SolanaNetwork)) {
+    throw new Error('Invalid SOLANA_NETWORK. Must be "devnet" or "mainnet-beta".');
+  }
+  return raw as SolanaNetwork;
 }
 
 /**

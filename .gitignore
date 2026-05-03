@@ -37,4 +37,5 @@ Thumbs.db
 # Tool local state
 .agents/
 .antigravity/
+.claude/
 supabase/.temp/
