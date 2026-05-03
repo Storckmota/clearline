@@ -572,7 +572,7 @@ Tasks:
 - [x] Do not store private key
 - [x] Generate Solana Pay URL with recipient wallet
 - [x] Include human-readable USDC amount
-- [ ] Include USDC mint from config
+- [x] Include USDC mint from config
 - [x] Include reference public key
 - [x] Include label
 
@@ -590,14 +590,14 @@ File:
 
 Tasks:
 
-- [ ] Implement `POST /api/receivables`
-- [ ] Accept label, amount, due date
-- [ ] Convert human-readable amount to raw USDC units
-- [ ] Generate reference public key
-- [ ] Generate Solana Pay URL
-- [ ] Store expected amount in raw USDC units
-- [ ] Insert expected payment into Supabase
-- [ ] Return expected payment and Solana Pay URL
+- [x] Implement `POST /api/receivables`
+- [x] Accept label, amount, due date
+- [x] Convert human-readable amount to raw USDC units
+- [x] Generate reference public key
+- [x] Generate Solana Pay URL
+- [x] Store expected amount in raw USDC units
+- [x] Insert expected payment into Supabase
+- [x] Return expected payment and Solana Pay URL
 
 ## 4.2 GET /api/receivables
 
