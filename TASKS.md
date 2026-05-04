@@ -660,11 +660,18 @@ The script must sign transactions.
 
 Tasks:
 
-- [ ] Add `PAYER_KEYPAIR_PATH` as script-only env var
+- [x] Add `PAYER_KEYPAIR_PATH` as script-only env var (present in `.env.local.example`; read directly by script via `process.env` — not in `lib/config.ts`)
 - [ ] Ensure payer wallet has devnet SOL
 - [ ] Ensure payer wallet has devnet USDC
 - [ ] Document how to fund payer wallet
-- [ ] Confirm `PAYER_KEYPAIR_PATH` is not required by app runtime config
+- [x] Confirm `PAYER_KEYPAIR_PATH` is not required by app runtime config (verified: absent from `lib/config.ts`; `npm run build` passes without it)
+
+How to fund payer wallet (for Pass B):
+- Generate keypair: `solana-keygen new --outfile payer-keypair.json --no-bip39-passphrase`
+- Set in `.env.local`: `PAYER_KEYPAIR_PATH=./payer-keypair.json`
+- Fund SOL: `solana airdrop 2 <pubkey> --url devnet`
+- Fund USDC: use devnet USDC faucet or transfer from a funded devnet wallet
+- Note: `payer-keypair.json` is already covered by `.gitignore` patterns `payer-keypair.json` and `*keypair*.json`
 
 ## 6.2 Build Transfer Script
 
@@ -674,27 +681,22 @@ Create:
 
 The script must support:
 
-- [ ] Send devnet USDC from payer wallet to monitored wallet
-- [ ] Optional reference public key
-- [ ] Exact payment
-- [ ] Partial payment
-- [ ] Overpaid payment
-- [ ] Raw transfer without reference
-- [ ] ATA creation if missing
+- [ ] Send devnet USDC from payer wallet to recipient wallet (verified by on-chain run — Pass B)
+- [x] Optional reference public key (`--reference <pubkey>` flag; omitting produces raw unknown transfer)
+- [x] Exact payment (CLI: `--amount <exact> --reference <ref>`)
+- [x] Partial payment (CLI: `--amount <less_than_expected> --reference <ref>`)
+- [x] Overpaid payment (CLI: `--amount <more_than_expected> --reference <ref>`)
+- [x] Raw transfer without reference (CLI: `--amount <n>` with no `--reference`)
+- [x] ATA creation if missing (explicit `createAssociatedTokenAccountInstruction` prepended when recipient ATA absent)
 
 ## 6.3 Script Commands
 
 Add package scripts:
 
-- [ ] Add command for exact/reference payment
-- [ ] Add command for raw unknown transfer
+- [x] Add command for exact/reference payment (`npm run send:devnet-usdc -- --recipient <wallet> --amount <n> --reference <ref>`)
+- [x] Add command for raw unknown transfer (`npm run send:devnet-usdc -- --recipient <wallet> --amount <n>`)
 
-Example command shape:
-
-```bash
-pnpm send:devnet-usdc --amount 100 --reference <reference_pubkey>
-pnpm send:devnet-usdc --amount 75
-```
+Package script added: `"send:devnet-usdc": "tsx scripts/send-devnet-usdc.ts"`
 
 ## 6.4 Verify Script
 
@@ -702,6 +704,18 @@ pnpm send:devnet-usdc --amount 75
 - [ ] Test partial transfer with reference
 - [ ] Test overpaid transfer with reference
 - [ ] Test raw unknown transfer without reference
+
+Task completed (Pass A):
+- Task: Phase 6.1 + 6.2 + 6.3 — Script implementation
+- Changed files: scripts/send-devnet-usdc.ts (created), package.json (send:devnet-usdc script added)
+- Acceptance criteria checked: Scripted Fallback Transfer (static only — execution pending Pass B)
+- Verification: npm run check:classifier (18/18), npm run lint (clean), npm run build (pass + type-check)
+- PAYER_KEYPAIR_PATH: absent from lib/config.ts, script reads process.env directly
+- Forbidden imports: lib/config.ts, lib/solana/mint.ts, lib/supabase.ts — none imported by script
+- ATA creation: explicit (createTransfer from @solana/pay does NOT create recipient ATA — verified by reading source)
+- Reference: added as readonly non-signer key on transferChecked instruction
+- Behavior unverified: actual on-chain transfer execution (Pass B)
+- Blockers: payer wallet must be funded before Pass B
 
 ---
 
