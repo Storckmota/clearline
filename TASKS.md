@@ -661,9 +661,9 @@ The script must sign transactions.
 Tasks:
 
 - [x] Add `PAYER_KEYPAIR_PATH` as script-only env var (present in `.env.local.example`; read directly by script via `process.env` — not in `lib/config.ts`)
-- [ ] Ensure payer wallet has devnet SOL
-- [ ] Ensure payer wallet has devnet USDC
-- [ ] Document how to fund payer wallet
+- [x] Ensure payer wallet has devnet SOL (confirmed: script ran without SOL error; payer `EqEsgzFfhxfUmEatpZduT6D9A3oJMv9DdZUWbZcubg9V`)
+- [x] Ensure payer wallet has devnet USDC (confirmed: script ran all 4 transfers without USDC error; started at 0.05 USDC)
+- [x] Document how to fund payer wallet (documented below)
 - [x] Confirm `PAYER_KEYPAIR_PATH` is not required by app runtime config (verified: absent from `lib/config.ts`; `npm run build` passes without it)
 
 How to fund payer wallet (for Pass B):
@@ -681,7 +681,7 @@ Create:
 
 The script must support:
 
-- [ ] Send devnet USDC from payer wallet to recipient wallet (verified by on-chain run — Pass B)
+- [x] Send devnet USDC from payer wallet to recipient wallet (verified by on-chain run — Pass B)
 - [x] Optional reference public key (`--reference <pubkey>` flag; omitting produces raw unknown transfer)
 - [x] Exact payment (CLI: `--amount <exact> --reference <ref>`)
 - [x] Partial payment (CLI: `--amount <less_than_expected> --reference <ref>`)
@@ -700,10 +700,23 @@ Package script added: `"send:devnet-usdc": "tsx scripts/send-devnet-usdc.ts"`
 
 ## 6.4 Verify Script
 
-- [ ] Test exact transfer with reference
-- [ ] Test partial transfer with reference
-- [ ] Test overpaid transfer with reference
-- [ ] Test raw unknown transfer without reference
+- [x] Test exact transfer with reference
+- [x] Test partial transfer with reference
+- [x] Test overpaid transfer with reference
+- [x] Test raw unknown transfer without reference
+
+Task completed (Pass B):
+- Task: Phase 6.2 + 6.4 — On-chain execution and verification
+- Changed files: TASKS.md only (script unchanged)
+- Acceptance criteria checked: Scripted Fallback Transfer
+- Payer: EqEsgzFfhxfUmEatpZduT6D9A3oJMv9DdZUWbZcubg9V
+- Exact:    5NWyaitmbFKrNsJ5ZPfLdfVec2dHAnJGN5ckV9Laq6bE2VkJxzN4qS1WKt3KCn9v5DkqhC3UfMfbx9Jt9LxcyEPa
+- Partial:  4NWU8KwEtyNyyyJEie1JWLNg1N51ejctakHUaWEpjpusPzE39D7MggkYRiSassL6DVwVPReiKwBTD22Nqy7kX4o9
+- Overpaid: 2e1hvrHyyjGiCXqTFx7djjxYFu2JiHa5ETwFuWJarPZwg8ckpNVjJ33Y4HEaicMFu1xbLrU61ssc33kHF7QWb7rH
+- Raw unknown: 2Z5aq2WJrJpbDyHuG9d7HhiGjx3Bn69PV6TjgzZrM4PUiC7bhuobe5ocybWeDugz9mtWCfy8p6A72gDB8GQePLky
+- Verification: 24/24 checks passed (tx existence, no error, mint, merchant wallet, amount, reference present/absent)
+- Behavior unverified: none
+- Blockers: none
 
 Task completed (Pass A):
 - Task: Phase 6.1 + 6.2 + 6.3 — Script implementation
