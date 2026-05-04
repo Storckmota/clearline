@@ -630,13 +630,23 @@ Tasks:
 
 - [x] Create expected payment through `POST /api/receivables`
 - [x] Generate Solana Pay URL
-- [ ] Send devnet USDC payment with reference
-- [ ] Confirm transaction lands on devnet
-- [ ] Confirm reference appears in transaction account keys
-- [ ] Confirm recipient can be validated
-- [ ] Confirm mint can be validated
-- [ ] Confirm amount can be validated
-- [ ] Confirm reference can be validated
+- [x] Send devnet USDC payment with reference
+- [x] Confirm transaction lands on devnet
+- [x] Confirm reference appears in transaction account keys
+- [x] Confirm recipient can be validated
+- [x] Confirm mint can be validated
+- [x] Confirm amount can be validated
+- [x] Confirm reference can be validated
+
+Task completed:
+- Task: Phase 5 — Prove Solana Pay Reference Flow (Part B on-chain verification)
+- Signature: 4ru1z7D6QDDeFqSbhoqdArmHZxfLcSjy3MgnVjX8EFcVKZLJ16Nyj2fmKcWWkrNin1j8oZUWwnYMb9rMaim6yC1h
+- Slot: 459968305 (devnet, confirmed)
+- Changed files: TASKS.md only
+- Acceptance criteria checked: Solana Pay Reference Flow
+- Verification: temporary script ran getParsedTransaction; confirmed no error, reference 6Ewg3HAvUugGHAGYyWsgdCt1brYQn733m2kyGAL6nNpK in account keys [6], payer in keys [0], merchant owner in postTokenBalances acctIdx=1, mint 4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU, amount delta = 10000 raw (0.01 USDC)
+- Behavior unverified: none
+- Blockers: none
 
 If this fails, stop and fix before continuing.
 
