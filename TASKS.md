@@ -814,16 +814,16 @@ Task completed:
 
 - [x] Parse transaction signature
 - [x] Check if signature already exists
-- [ ] Return 200 immediately if duplicate webhook delivery
-- [ ] Store raw payload before classification
-- [ ] Save real Helius payload fixture
+- [x] Return 200 immediately if duplicate webhook delivery
+- [x] Store raw payload before classification
+- [x] Save real Helius payload fixture (fulfilled by Phase 7.4 — fixtures/helius/raw-capture.json)
 
-Blocker (storage tasks):
-- raw_payload insertion is deferred because transactions requires parsed recipient_wallet, amount_raw,
-  and mint from Phase 8 parser. These fields are NOT NULL and cannot be populated in Phase 7.3.
-- "Store raw payload before classification" and "Save real Helius payload fixture" carry forward to Phase 8.
+Note (storage deferral, now resolved):
+- raw_payload insertion was deferred because transactions required parsed recipient_wallet, amount_raw,
+  and mint from Phase 8 parser. Resolved in Phase 9 via lib/ingest.ts.
+- "Store raw payload before classification" and "Save real Helius payload fixture" carried forward to Phase 8/9.
 
-Task completed (partial — 2 of 5):
+Task completed (all 5 of 5 — carry-forward items verified by Phase 9 live run):
 - Task: 7.3 Raw Payload Persistence
 - Phase: 7
 - Changed files:
@@ -834,11 +834,9 @@ Task completed (partial — 2 of 5):
   - npm run check:classifier — 18/18 passed
   - npm run lint — clean
   - npm run build — passes; ƒ /api/webhooks/helius confirmed
-- Behavior unverified:
-  - Dedupe against a real duplicate delivery (requires live trigger)
-  - raw_payload storage and fixture capture (deferred to Phase 8)
-- Blockers:
-  - transactions.recipient_wallet, amount_raw, mint are NOT NULL — insert deferred to Phase 8
+  - Live: duplicate delivery returned 200, log showed "Duplicate signature", row count stayed at 1
+  - Live: raw_payload stored in Supabase before classification (confirmed in Phase 9 verification)
+- Blockers: none
 
 ## 7.4 Real Fixture Requirement
 
@@ -931,10 +929,10 @@ Note: merchant wallet `4imzXJrD…` is the ATA owner but does NOT appear in the 
 
 ## 8.4 Fallback Failure Handling
 
-- [ ] If RPC fallback fails, classify as unknown
-- [ ] Set reason: `Reference not found; RPC fallback failed`
-- [ ] Do not crash webhook handler
-- [ ] Always return 200 after storing raw payload
+- [x] If RPC fallback fails, classify as unknown
+- [x] Set reason: `Reference not found; RPC fallback failed`
+- [x] Do not crash webhook handler
+- [x] Always return 200 after storing raw payload
 
 ---
 
@@ -957,22 +955,37 @@ This module must be used by both:
 
 Tasks:
 
-- [ ] Receive payload
-- [ ] Extract signature
-- [ ] Dedupe by signature
-- [ ] Store raw payload
-- [ ] Parse transfer
-- [ ] Extract reference
-- [ ] Run RPC fallback if needed
-- [ ] Find matching expected payment
-- [ ] Run classifier
-- [ ] Update transaction
-- [ ] Update expected payment status if matched
-- [ ] Return classification result
+- [x] Receive payload
+- [x] Extract signature
+- [x] Dedupe by signature
+- [x] Store raw payload
+- [x] Parse transfer
+- [x] Extract reference
+- [x] Run RPC fallback if needed
+- [x] Find matching expected payment
+- [x] Run classifier
+- [x] Update transaction
+- [x] Update expected payment status if matched
+- [x] Return classification result
 
 Critical rule:
 
 Do not duplicate ingestion logic in the replay endpoint.
+
+Implementation notes (live verification completed for unknown/RPC-failure, duplicate-signature, matched-reference paid, and receivable-update paths):
+- lib/ingest.ts created; app/api/webhooks/helius/route.ts delegates to ingest()
+- extractSignatureFromPayload iterates all payload items (batch-safe)
+- Insert maps to actual transactions schema columns only (no recipient_token_account/decimals/slot/timestamp)
+- observed_at mapped from parsed.timestamp * 1000 as ISO string
+- ingest() never throws; route wraps in try/catch for additional safety
+- Schema-aligned, lint-clean, tsc-clean, build-clean as of Codex fix pass
+
+Verified paths (live Supabase + ngrok):
+- Unknown/no-reference path: transaction stored with raw_payload, status unknown, reason "Reference not found; RPC fallback failed"
+- Duplicate signature path: second delivery returned duplicate_sig and row count stayed at 1
+- Matched reference paid path: transaction status paid, reference_pubkey and receivable_id populated, raw_payload stored
+- Receivable update: receivable status changed from pending to paid
+- Business duplicate end-to-end remains unverified — payer had 0 USDC at time of verification; transfer could not be sent
 
 ---
 
