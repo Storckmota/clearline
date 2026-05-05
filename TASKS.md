@@ -844,9 +844,25 @@ Task completed (partial — 2 of 5):
 
 Fixtures must come from real Helius webhook payloads.
 
-- [ ] Save fixtures from real Helius webhook payloads
-- [ ] Do not handcraft fixtures unless clearly marked as mock/demo-only
-- [ ] Store fixtures under `fixtures/helius/`
+- [x] Save fixtures from real Helius webhook payloads
+- [x] Do not handcraft fixtures unless clearly marked as mock/demo-only
+- [x] Store fixtures under `fixtures/helius/`
+
+Task completed:
+- Task: 7.4 Real Fixture Requirement
+- Phase: 7
+- Changed files: fixtures/helius/raw-capture.json (created externally via ngrok capture)
+- Verification:
+  - Captured via real Helius enhancedDevnet webhook delivery through ngrok local tunnel
+  - JSON validity confirmed: node -e "JSON.parse(...)" → valid json
+  - Secret/header scan: no matches for Authorization, Bearer, POST /api, HTTP/1.1, Host:, Content-Type, X-Forwarded
+  - Fixture contains only the JSON body — no HTTP headers, no Authorization token
+  - Fixture signature: 3oSgDJPbUCo5TNcj98hck2gBJ41JPrBR7WmPBuVy9GSmB6THkkRPD1Pg9itT8ecgPmGFFM2JMgDt9Vwc2pKuNwiS
+  - Fixture represents a real Devnet USDC transfer to merchant wallet 4imzXJrDPSPjdHoo48izKv7K92PxcwCUiZHLZhgAGGBG
+  - Merchant USDC ATA: CaUARQQrc4umBbq8ewYQkkhovgJLKCw1LHdeM6Hrbv6F
+- Behavior unverified:
+  - Fixture has not yet been run through Phase 8 parser (lib/helius.ts — not yet built)
+- Blockers: none
 
 ---
 
