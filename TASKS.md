@@ -751,13 +751,30 @@ Create:
 
 Tasks:
 
-- [ ] Use Node runtime
-- [ ] Accept POST requests
-- [ ] Verify `Authorization` header equals `HELIUS_AUTH_TOKEN`
-- [ ] Return 401 if token is invalid
-- [ ] Return 200 quickly after valid processing
+- [x] Use Node runtime
+- [x] Accept POST requests
+- [x] Verify `Authorization` header equals `HELIUS_AUTH_TOKEN`
+- [x] Return 401 if token is invalid
+- [x] Return 200 quickly after valid processing
 
 At this phase, raw ingestion is enough.
+
+Task completed:
+- Task: 7.1 Webhook Endpoint Shell
+- Phase: 7
+- Changed files:
+  - app/api/webhooks/helius/route.ts (created)
+- Acceptance criteria checked:
+  - Helius Webhook Ingestion (§8): Node runtime, POST only, auth header check, 401 on bad token, 200 on valid
+- Verification:
+  - npx tsc --noEmit — clean
+  - npm run lint — clean
+  - npm run build — passes; route appears as ƒ /api/webhooks/helius
+- Behavior unverified:
+  - Real Helius payload delivery (requires Phase 7.2 — Vercel/ngrok + Helius dashboard config)
+- Blockers:
+  - None for 7.1; Phase 7.2 requires live deployment
+- TASKS.md updated: yes
 
 ## 7.2 Helius Setup
 
