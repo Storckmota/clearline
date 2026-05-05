@@ -778,12 +778,37 @@ Task completed:
 
 ## 7.2 Helius Setup
 
-- [ ] Deploy app to Vercel preview or expose local app with ngrok
-- [ ] Create Helius `enhancedDevnet` webhook
-- [ ] Monitor recipient wallet
-- [ ] Monitor recipient USDC ATA
-- [ ] Send test USDC transfer
-- [ ] Confirm webhook payload arrives
+- [x] Deploy app to Vercel preview or expose local app with ngrok
+- [x] Create Helius `enhancedDevnet` webhook
+- [x] Monitor recipient wallet
+- [x] Monitor recipient USDC ATA
+- [x] Send test USDC transfer
+- [x] Confirm webhook payload arrives
+
+Task completed:
+- Task: 7.2 Helius Setup
+- Phase: 7
+- Changed files: TASKS.md only
+- Verification:
+  - Vercel deployment live: https://clearline-lovat.vercel.app/api/webhooks/helius
+  - Helius enhancedDevnet webhook delivered POST to live endpoint
+  - Vercel logs confirm: POST 200 /api/webhooks/helius
+  - Structured log confirmed: isArray=true count=1 size=2245B
+  - Real Devnet transfer signature: 3oZvdsxvWUeSwQyWMgeu77b7Au9UmUrGJEP97qEpF528qafUSrwaNfqfDV5qPCQgeEVFUj2K96rpFRU3AZDQK2Gw
+  - Merchant wallet: 4imzXJrDPSPjdHoo48izKv7K92PxcwCUiZHLZhgAGGBG
+  - Merchant USDC ATA: CaUARQQrc4umBbq8ewYQkkhovgJLKCw1LHdeM6Hrbv6F
+  - Helius monitors both merchant wallet and merchant USDC ATA
+  - Transfer triggered via scripted Devnet path (npm run send:devnet-usdc)
+- Notes:
+  - Phantom mobile Solana Pay flow is unreliable on Devnet and must not be treated as backend source of truth for testing
+  - Scripted transfer path (scripts/send-devnet-usdc.ts) is the verified trigger for all Devnet webhook tests
+  - Payer: EqEsgzFfhxfUmEatpZduT6D9A3oJMv9DdZUWbZcubg9V
+  - Merchant wallet: 4imzXJrDPSPjdHoo48izKv7K92PxcwCUiZHLZhgAGGBG
+  - Merchant USDC ATA: CaUARQQrc4umBbq8ewYQkkhovgJLKCw1LHdeM6Hrbv6F
+- Behavior unverified:
+  - Raw payload not yet stored (Phase 7.3)
+  - Real fixture not yet saved (Phase 7.4)
+- Blockers: none
 
 ## 7.3 Raw Payload Persistence
 
