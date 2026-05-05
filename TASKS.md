@@ -998,10 +998,37 @@ Relevant acceptance criteria:
 
 ## 10.1 GET /api/receivables/[id]
 
-- [ ] Return single expected payment
-- [ ] Return transactions linked to it
-- [ ] Return display status
-- [ ] Do not query blockchain from UI route
+- [x] Return single expected payment
+- [x] Return transactions linked to it
+- [x] Return display status
+- [x] Do not query blockchain from UI route
+
+Task completed:
+- Task: 10.1 GET /api/receivables/[id]
+- Phase: 10
+- Changed files:
+  - app/api/receivables/[id]/route.ts (created)
+- Acceptance criteria checked:
+  - Manual Resolution (detail route prerequisite): returns receivable + linked transactions + display_status from Supabase only
+  - Proof Page (data source): no blockchain/RPC call; all fields from DB
+- Verification:
+  - npm run check:classifier — 18/18 passed
+  - npm run check:parser — 27/27 passed
+  - npm run check:rpc — 30/30 passed
+  - npm run lint — clean
+  - npx tsc --noEmit — clean
+  - npm run build — clean; ƒ /api/receivables/[id] confirmed in route table
+  - Manual: GET /api/receivables/e6c4dfa8-f19e-4a73-901c-b5d04bf3ee5f → 200, receivable status=paid, display_status=paid, 1 linked transaction ✓
+  - Manual: GET /api/receivables/00000000-0000-0000-0000-000000000000 → 404 ✓
+- Behavior unverified:
+  - Production deployment not yet verified for this route
+  - display_status=overdue path (requires a receivable with pending status + past due_date)
+- Blockers:
+  - none
+- Key design notes:
+  - display_status computed on read; overdue never written to DB
+  - transactions extracted from Supabase embedded relation and sorted newest-first in JS
+  - malformed UUID → 400 via Supabase error code 22P02
 
 ## 10.2 POST /api/resolve
 
