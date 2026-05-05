@@ -1014,11 +1014,39 @@ Relevant acceptance criteria:
 
 ## 10.3 POST /api/dev/replay-webhook
 
-- [ ] Require `DEV_SECRET`
-- [ ] Accept saved Helius payload JSON
-- [ ] Call shared ingestion pipeline
-- [ ] Return resulting transaction status
-- [ ] Do not expose this endpoint in production UI
+- [x] Require `DEV_SECRET`
+- [x] Accept saved Helius payload JSON
+- [x] Call shared ingestion pipeline
+- [x] Return resulting transaction status
+- [x] Do not expose this endpoint in production UI
+
+Task completed:
+- Task: 10.3 POST /api/dev/replay-webhook
+- Phase: 10
+- Changed files:
+  - app/api/dev/replay-webhook/route.ts (created)
+- Acceptance criteria checked:
+  - Replay Endpoint: requires DEV_SECRET, calls shared ingest(), returns IngestResult, no UI exposure
+- Verification:
+  - npm run check:classifier — 18/18 passed
+  - npm run check:parser — 27/27 passed
+  - npm run check:rpc — 30/30 passed
+  - npm run lint — clean
+  - npx tsc --noEmit — clean
+  - npm run build — clean; ƒ /api/dev/replay-webhook confirmed in route table
+  - Manual: no x-dev-secret → 401 ✓
+  - Manual: wrong x-dev-secret → 401 ✓
+  - Manual: correct DEV_SECRET + fixtures/helius/raw-capture.json → 200, status=duplicate_sig, signature=3oSgDJPbUCo5… ✓
+  - DEV_SECRET is required in .env.local; value not recorded here
+- Behavior unverified:
+  - Production deployment not yet verified for this route
+- Blockers:
+  - none
+- Key design notes:
+  - Calls ingest(payload) — no duplicated ingestion logic
+  - config.DEV_SECRET access wrapped in try/catch: unconfigured secret returns 401, not 500
+  - Logs status and truncated signature only — no payload, no secret
+  - Returns 500 on unexpected ingest() throw (unlike Helius webhook which always returns 200)
 
 ---
 
