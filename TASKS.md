@@ -812,11 +812,33 @@ Task completed:
 
 ## 7.3 Raw Payload Persistence
 
-- [ ] Parse transaction signature
-- [ ] Check if signature already exists
+- [x] Parse transaction signature
+- [x] Check if signature already exists
 - [ ] Return 200 immediately if duplicate webhook delivery
 - [ ] Store raw payload before classification
 - [ ] Save real Helius payload fixture
+
+Blocker (storage tasks):
+- raw_payload insertion is deferred because transactions requires parsed recipient_wallet, amount_raw,
+  and mint from Phase 8 parser. These fields are NOT NULL and cannot be populated in Phase 7.3.
+- "Store raw payload before classification" and "Save real Helius payload fixture" carry forward to Phase 8.
+
+Task completed (partial — 2 of 5):
+- Task: 7.3 Raw Payload Persistence
+- Phase: 7
+- Changed files:
+  - app/api/webhooks/helius/route.ts (updated — signature extraction, dedupe query, safe logging)
+- Acceptance criteria checked:
+  - Helius Webhook Ingestion (§8): signature extracted and dedupe check implemented against transactions table
+- Verification:
+  - npm run check:classifier — 18/18 passed
+  - npm run lint — clean
+  - npm run build — passes; ƒ /api/webhooks/helius confirmed
+- Behavior unverified:
+  - Dedupe against a real duplicate delivery (requires live trigger)
+  - raw_payload storage and fixture capture (deferred to Phase 8)
+- Blockers:
+  - transactions.recipient_wallet, amount_raw, mint are NOT NULL — insert deferred to Phase 8
 
 ## 7.4 Real Fixture Requirement
 
