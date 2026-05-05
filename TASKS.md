@@ -1032,12 +1032,45 @@ Task completed:
 
 ## 10.2 POST /api/resolve
 
-- [ ] Load unknown transaction
-- [ ] Load selected expected payment
-- [ ] Assign transaction to expected payment
-- [ ] Re-run classifier
-- [ ] Update transaction status and reason
-- [ ] Update expected payment status using status rules
+- [x] Load unknown transaction
+- [x] Load selected expected payment
+- [x] Assign transaction to expected payment
+- [x] Re-run classifier
+- [x] Update transaction status and reason
+- [x] Update expected payment status using status rules
+
+Task completed:
+- Task: 10.2 POST /api/resolve
+- Phase: 10
+- Changed files:
+  - app/api/resolve/route.ts (created)
+- Acceptance criteria checked:
+  - Manual Resolution: auth (x-dev-secret), field validation, transaction load, status guard, receivable load, classify(), tx update, receivable update rules
+- Verification:
+  - npm run check:classifier — 18/18 passed
+  - npm run lint — clean
+  - npm run build — clean; ƒ /api/resolve confirmed in route table
+  - Manual: no x-dev-secret → 401 ✓
+  - Manual: wrong x-dev-secret → 401 ✓
+  - Manual: missing fields → 400 ✓
+  - Manual: malformed UUID → 400 ✓
+  - Manual: non-existent transaction_id → 404 ✓
+  - Manual: non-existent receivable_id (with valid unknown tx) → 404 ✓
+  - Manual: non-unknown transaction → 400 ✓
+  - Manual: unknown tx (amount_raw=1000) + pending receivable (expected=1000) → 200, status=paid, reason="Exact match…" ✓
+  - DB verified: transaction.status=paid, transaction.receivable_id set, transaction.reference_pubkey set, receivable.status=paid ✓
+- Behavior unverified:
+  - Partial path (no unknown tx available in DB at time of verification)
+  - Overpaid path (no unknown tx available in DB at time of verification)
+  - Duplicate path (paid receivable → duplicate) (no unknown tx available in DB at time of verification)
+- Blockers: none
+- Key design notes:
+  - Reuses classify() from lib/classify.ts — no logic duplicated
+  - Receivable status updated only for paid/partial/overpaid; not for duplicate or unknown
+  - config.DEV_SECRET access wrapped in try/catch: unconfigured → 401, not 500
+  - Malformed UUID caught via Supabase error code 22P02 → 400
+  - No stack traces, no secrets logged, no request body logged
+  - Response status type uses ClassifyStatus — all 5 statuses (paid/partial/overpaid/duplicate/unknown) are allowed
 
 ## 10.3 POST /api/dev/replay-webhook
 
