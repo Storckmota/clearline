@@ -1038,8 +1038,11 @@ Task completed:
   - Manual: wrong x-dev-secret → 401 ✓
   - Manual: correct DEV_SECRET + fixtures/helius/raw-capture.json → 200, status=duplicate_sig, signature=3oSgDJPbUCo5… ✓
   - DEV_SECRET is required in .env.local; value not recorded here
+  - Production (clearline-lovat.vercel.app): no secret → 401 ✓
+  - Production (clearline-lovat.vercel.app): wrong secret → 401 ✓
+  - Production (clearline-lovat.vercel.app): correct DEV_SECRET + fixture → 200, status=duplicate_sig, signature=3oSgDJPbUCo5… ✓
 - Behavior unverified:
-  - Production deployment not yet verified for this route
+  - none
 - Blockers:
   - none
 - Key design notes:
