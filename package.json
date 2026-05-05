@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "check:classifier": "tsx scripts/check-classifier.ts",
+    "check:parser": "tsx scripts/check-parser.ts",
     "send:devnet-usdc": "tsx scripts/send-devnet-usdc.ts"
   },
   "dependencies": {

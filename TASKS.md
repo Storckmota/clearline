@@ -882,26 +882,30 @@ Create:
 
 Tasks:
 
-- [ ] Parse USDC transfers from real Helius enhanced payload
-- [ ] Extract signature
-- [ ] Extract sender wallet
-- [ ] Extract recipient wallet
-- [ ] Extract mint
-- [ ] Extract raw amount
-- [ ] Extract timestamp
-- [ ] Attempt to extract reference from account keys
+- [x] Parse USDC transfers from real Helius enhanced payload
+- [x] Extract signature
+- [x] Extract sender wallet
+- [x] Extract recipient wallet
+- [x] Extract mint
+- [x] Extract raw amount (from accountData rawTokenAmount.tokenAmount string — never float)
+- [x] Extract timestamp
+- [x] Attempt to extract reference from account keys
+
+Verified: `npm run check:parser` — 27 passed, 0 failed. `npm run lint` clean. `npx tsc --noEmit` clean. `npm run build` clean. Parser iterates all items in payload array (not only index 0).
 
 ## 8.2 Parser Fixture Check
 
 Required.
 
-- [ ] Run parser against saved Helius fixture
-- [ ] Confirm signature extraction
-- [ ] Confirm mint extraction
-- [ ] Confirm amount extraction
-- [ ] Confirm sender extraction
-- [ ] Confirm recipient extraction
-- [ ] Confirm reference extraction if present
+- [x] Run parser against saved Helius fixture
+- [x] Confirm signature extraction (3oSgDJPbUCo5TNcj98hck2gBJ41JPrBR7WmPBuVy9GSmB6THkkRPD1Pg9itT8ecgPmGFFM2JMgDt9Vwc2pKuNwiS)
+- [x] Confirm mint extraction (4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU)
+- [x] Confirm amount extraction (BigInt(1000) from string "1000", not float 0.001)
+- [x] Confirm sender extraction (EqEsgzFfhxfUmEatpZduT6D9A3oJMv9DdZUWbZcubg9V)
+- [x] Confirm recipient extraction (4imzXJrDPSPjdHoo48izKv7K92PxcwCUiZHLZhgAGGBG)
+- [x] Confirm reference extraction — empty array (no reference in fixture; wrong mint / wrong recipient / malformed all return null)
+
+Verified: `npm run check:parser` — 27 passed, 0 failed. Created `scripts/check-parser.ts`. Added `check:parser` to `package.json`. Batch tests confirm parser skips invalid/wrong-mint items and finds valid transfer in any array position.
 
 ## 8.3 RPC Fallback
 
