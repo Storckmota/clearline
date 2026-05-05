@@ -915,12 +915,19 @@ Create:
 
 Tasks:
 
-- [ ] Implement `getTransaction(signature)`
-- [ ] Use `maxSupportedTransactionVersion: 0`
-- [ ] Extract message account keys
-- [ ] Normalize account keys to base58
-- [ ] Compare account keys against open expected payment references
-- [ ] Return matched reference if found
+- [x] Implement `getTransactionAccountKeys(signature, rpcUrl)` — pure module, rpcUrl provided by caller
+- [x] Use `maxSupportedTransactionVersion: 0`
+- [x] Extract message account keys — supports `message.staticAccountKeys` (v0) and `message.accountKeys` (legacy)
+- [x] Include `meta.loadedAddresses.writable` + `.readonly` (Address Lookup Table keys)
+- [x] Normalize account keys to base58 via `.toBase58()`
+- [x] Deduplicate keys preserving insertion order
+- [x] Compare account keys against open expected payment references via `findReferenceMatch(accountKeys, candidateReferences)`
+- [x] Return matched reference if found — first matching candidate wins; null if none
+
+Verified: `npm run check:rpc` — 30 passed, 0 failed, 0 skipped.
+Live RPC smoke check: devnet fixture signature confirmed — `EqEsgzFf…` (payer), `CaUARQQr…` (merchant ATA), `4zMMC9sr…` (USDC mint) all present. No reference in raw transfer (null match) confirmed. `npm run lint` clean. `npx tsc --noEmit` clean. `npm run build` clean.
+
+Note: merchant wallet `4imzXJrD…` is the ATA owner but does NOT appear in the transaction message account keys for SPL token transfers — only the ATAs and payer appear. The `toUserAccount` in Helius enhanced payload is derived by Helius, not present as a raw account key in the transaction message.
 
 ## 8.4 Fallback Failure Handling
 

@@ -9,6 +9,7 @@
     "lint": "eslint",
     "check:classifier": "tsx scripts/check-classifier.ts",
     "check:parser": "tsx scripts/check-parser.ts",
+    "check:rpc": "tsx scripts/check-rpc.ts",
     "send:devnet-usdc": "tsx scripts/send-devnet-usdc.ts"
   },
   "dependencies": {
