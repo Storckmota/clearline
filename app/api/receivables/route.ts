@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PublicKey } from "@solana/web3.js";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { toRawUnits } from "../../../lib/usdc";
 import { generateReference, buildSolanaPayUrl } from "../../../lib/solana-pay";
 import { getUsdcMint } from "../../../lib/solana/mint";
@@ -9,8 +10,10 @@ export const runtime = "nodejs";
 
 // ---------------------------------------------------------------------------
 // GET /api/receivables?merchant_wallet=<base58>
-// Returns all receivables for the given merchant wallet, with linked
-// transactions and a computed display_status (overdue is display-only).
+// Returns all receivables for the given merchant wallet (with linked
+// transactions and computed display_status) plus orphan_transactions —
+// transactions with no receivable_id that arrived at the merchant wallet
+// or its derived USDC ATA (typically status=unknown).
 // ---------------------------------------------------------------------------
 
 export async function GET(req: NextRequest) {
@@ -34,7 +37,9 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // --- Query Supabase -------------------------------------------------------
+  const walletStr = merchantPubkey.toBase58();
+
+  // --- Main receivables query -----------------------------------------------
   const { data, error } = await supabaseAdmin
     .from("receivables")
     .select(
@@ -46,7 +51,7 @@ export async function GET(req: NextRequest) {
          observed_at, created_at
        )`
     )
-    .eq("merchant_wallet", merchantPubkey.toBase58())
+    .eq("merchant_wallet", walletStr)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -64,7 +69,38 @@ export async function GET(req: NextRequest) {
         : r.status,
   }));
 
-  return NextResponse.json({ receivables }, { status: 200 });
+  // --- Orphan transactions query --------------------------------------------
+  // Transactions with no receivable_id that arrived at this wallet or its ATA.
+  // Gracefully degrades: if ATA derivation fails, query by wallet address only.
+  let ataStr: string | null = null;
+  try {
+    const usdcMint = getUsdcMint();
+    ataStr = getAssociatedTokenAddressSync(usdcMint, merchantPubkey, false).toBase58();
+  } catch {
+    // Config not available or ATA derivation failed — query by wallet only.
+  }
+
+  const recipientFilter = ataStr
+    ? `recipient_wallet.eq.${walletStr},recipient_wallet.eq.${ataStr}`
+    : `recipient_wallet.eq.${walletStr}`;
+
+  const { data: orphanData, error: orphanError } = await supabaseAdmin
+    .from("transactions")
+    .select(
+      "id, signature, amount_raw, status, classification_reason, sender_wallet, recipient_wallet, observed_at, created_at"
+    )
+    .is("receivable_id", null)
+    .or(recipientFilter)
+    .order("created_at", { ascending: false });
+
+  if (orphanError) {
+    console.error("[GET /api/receivables] orphan transaction query failed:", orphanError.code);
+    // Do not fail the entire request — return empty array instead.
+  }
+
+  const orphan_transactions = orphanData ?? [];
+
+  return NextResponse.json({ receivables, orphan_transactions }, { status: 200 });
 }
 
 // ---------------------------------------------------------------------------

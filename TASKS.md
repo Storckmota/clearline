@@ -1128,20 +1128,55 @@ Route:
 
 Must show:
 
-- [ ] Needs attention
-- [ ] Unknown
-- [ ] Partial
-- [ ] Overpaid
-- [ ] Duplicate
-- [ ] Paid
-- [ ] Overdue
+- [x] Needs attention
+- [x] Unknown
+- [x] Partial
+- [x] Overpaid
+- [x] Duplicate
+- [x] Paid
+- [x] Overdue
 
 Rules:
 
-- [ ] First screen must be inbox
-- [ ] Do not start with create payment screen
-- [ ] Do not add charts
-- [ ] Do not add financial dashboard
+- [x] First screen must be inbox
+- [x] Do not start with create payment screen
+- [x] Do not add charts
+- [x] Do not add financial dashboard
+
+Task completed:
+- Task: 11.1 Payment Inbox
+- Phase: 11
+- Changed files:
+  - app/page.tsx (full replacement — dev scaffold → Payment Inbox)
+  - app/api/receivables/route.ts (GET extended: added orphan_transactions field)
+- Acceptance criteria checked:
+  - Payment Inbox UI: first screen is inbox, WalletMultiButton, all 7 status sections present, no charts, no dashboard
+- Verification:
+  - npm run check:classifier — 18/18 passed
+  - npm run lint — clean
+  - npm run build — clean; / is static, ƒ /api/receivables confirmed
+  - Manual: GET /api/receivables without wallet param → 400 ✓
+  - Manual: GET /api/receivables?merchant_wallet=4imzXJrD… → 200, includes receivables (3) and orphan_transactions (0) ✓
+  - Manual: orphan_transactions present, raw_payload absent from all transaction rows ✓
+  - Manual: no broken links in HTML (no /receivables or /tx hrefs in page shell) ✓
+  - Manual: page HTML loads with wallet adapter scripts ✓
+- Behavior unverified due to current DB state:
+  - Partial section (no partial receivables in DB; section renders at count=0 → not shown, which is correct)
+  - Overpaid section (no overpaid receivables in DB)
+  - Duplicate section (no duplicate transactions in DB at time of verification)
+  - Unknown section (no orphan transactions in DB; was resolved to paid in 10.2 verification)
+  - Overdue section (no pending receivables with past due_date in DB)
+  - Needs Attention header (would show if any of the above existed; logic is present)
+  - Paid section renders with data: 2 paid receivables in DB ✓
+  - Pending section renders with data: 1 pending receivable in DB ✓
+- Key design notes:
+  - amount display uses BigInt arithmetic only — no float math, ES2017 compatible
+  - Section component returns null when count=0 — empty sections not rendered
+  - No links to /receivables/new or /receivables/[id] (not yet implemented)
+  - orphan_transactions: ATA derivation uses getUsdcMint() (network-aware, not hardcoded); gracefully degrades to wallet-only query if derivation fails
+  - Needs Attention groups Unknown/Partial/Overpaid/Duplicate as sub-sections (no duplication)
+  - Overdue/Paid/Pending are standalone sections
+- Blockers: none
 
 ## 11.2 Create Expected Payment
 
