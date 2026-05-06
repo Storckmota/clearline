@@ -2,6 +2,7 @@
 
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 // ---------------------------------------------------------------------------
@@ -175,9 +176,12 @@ function Section({
 // ---------------------------------------------------------------------------
 export default function Home() {
   const { publicKey } = useWallet();
+  const [mounted, setMounted] = useState(false);
   const [data, setData] = useState<InboxData | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (!publicKey) {
@@ -255,7 +259,26 @@ export default function Home() {
               </span>
             )}
           </div>
-          <WalletMultiButton />
+          <div className="flex items-center gap-2">
+            {mounted && publicKey && (
+              <Link
+                href="/receivables/new"
+                className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 whitespace-nowrap"
+              >
+                New expected payment
+              </Link>
+            )}
+            {mounted ? (
+              <WalletMultiButton />
+            ) : (
+              <button
+                disabled
+                className="text-sm px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-default"
+              >
+                Connect Wallet
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -283,7 +306,11 @@ export default function Home() {
         {publicKey && !loading && !fetchError && isEmpty && (
           <div className="text-center py-16 flex flex-col gap-2">
             <p className="text-gray-500 text-sm">No expected payments found for this wallet.</p>
-            <p className="text-gray-400 text-xs">Create an expected payment to get started.</p>
+            <p className="text-gray-400 text-xs">
+              <Link href="/receivables/new" className="underline hover:text-gray-600 dark:hover:text-gray-300">
+                Create an expected payment
+              </Link>{" "}to get started.
+            </p>
           </div>
         )}
 

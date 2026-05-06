@@ -1186,15 +1186,59 @@ Route:
 
 Fields:
 
-- [ ] Label
-- [ ] Amount in USDC
-- [ ] Due date
+- [x] Label
+- [x] Amount in USDC
+- [x] Due date
 
 Actions:
 
-- [ ] Create expected payment
-- [ ] Show Solana Pay link
-- [ ] Show reference public key
+- [x] Create expected payment
+- [x] Show Solana Pay link
+- [x] Show reference public key
+
+Task completed (with warnings):
+- Task: 11.2 Create Expected Payment
+- Phase: 11
+- Changed files:
+  - app/receivables/new/page.tsx (created)
+  - app/page.tsx (added persistent "New expected payment" CTA; mounted hydration guard; next/link import)
+  - app/providers.tsx (autoConnect disabled to prevent stale wallet session restoring on page load)
+  - package.json (default dev/build switched off Turbopack — chunk 400 blocked browser hydration)
+- Acceptance criteria checked:
+  - Payment Inbox UI: /receivables/new exists; wallet-gated form; fields label/amount/due_date; POST to /api/receivables; success card with payment link + matching reference; Back to Inbox link; Create another reset
+  - No forbidden scope: no auth, no charts, no dashboard, no new backend routes, no migrations, no QR, no edit/delete/filter/onboarding
+- Verification completed (non-browser):
+  - npm run check:classifier — 18/18 passed
+  - npm run lint — clean
+  - npm run build — clean; ○ /receivables/new confirmed in route table
+  - GET http://localhost:3000/receivables/new — 200 ✓
+  - GET http://localhost:3000/ — 200 ✓
+  - POST /api/receivables (label="Test Payment 11.2", amount="25.5", due_date="2026-06-01") → 201, reference_pubkey and solana_pay_url populated ✓
+  - POST /api/receivables with invalid amount "abc" → 400, error message ✓
+  - JS chunks all returned 200 after switching off Turbopack
+- Browser verification (Antigravity QA + Julio manual — 2026-05-06):
+  - Antigravity Browser QA: PASS WITH WARNINGS
+  - CSS/UI loaded correctly after npm run dev ✓
+  - Wallet button clickable; hydration warnings not observed ✓
+  - Wallet connection confirmed (Julio — merchant wallet) ✓
+  - Wallet-connected form rendered client-side ✓
+  - Create flow confirmed: expected payment created, appeared in inbox ✓
+  - Created-this-session list visible and correctly appends on each create ✓
+  - Persistent "New expected payment" CTA visible in inbox when wallet connected ✓
+  - Success card microcopy confirmed: Payment link is payer-facing; matching reference is Clearline-internal ✓
+- Warnings (non-blocking, deferred):
+  - Antigravity fallback wallet did not match the merchant wallet — merchant-wallet correctness manually verified by Julio only
+  - Wallet connection delay observed on connect — considered UX polish, not a blocker
+  - Copy-link / copy-reference deep validation deferred to QR/proof or payment-link validation phase to avoid creating extra records
+- Key design notes:
+  - BigInt-safe rawToHuman — same ES2017-compatible pattern as app/page.tsx (no bigint literals)
+  - merchant_wallet from publicKey.toBase58() — not shown as form input
+  - due_date omitted from POST body when empty (native date picker returns YYYY-MM-DD string)
+  - next/link Link used for all internal navigation (/ links) — ESLint no-html-link-for-pages compliant
+  - formError shown inline above submit button; form stays editable on API error
+  - No QR code, no RPC calls, no server-only imports
+  - Payment link shown before matching reference in success card (payer-facing first)
+- Blockers: none
 
 ## 11.3 Expected Payment Detail
 

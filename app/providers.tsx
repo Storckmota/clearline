@@ -13,14 +13,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
   // exposing private RPC URLs to the client.
   const endpoint = useMemo(() => clusterApiUrl("devnet"), []);
 
-  // We use an empty array for wallets to rely on the Wallet Standard.
-  // This automatically supports modern wallets like Phantom, Solflare, and Backpack
-  // without needing individual adapter dependencies.
+  // Empty wallets array relies on Wallet Standard — supports Phantom, Solflare, Backpack
+  // without individual adapter packages. autoConnect=false prevents stale localStorage
+  // sessions from restoring the wrong wallet on page load.
   const wallets = useMemo(() => [], []);
 
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProvider wallets={wallets} autoConnect={false}>
         <WalletModalProvider>{children}</WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
