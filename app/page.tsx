@@ -1,8 +1,8 @@
 "use client";
 
 import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import Link from "next/link";
+import { WalletButton } from "./components/WalletButton";
 import { useEffect, useState } from "react";
 
 // ---------------------------------------------------------------------------
@@ -473,16 +473,7 @@ export default function Home() {
                 New expected payment
               </Link>
             )}
-            {mounted ? (
-              <WalletMultiButton />
-            ) : (
-              <button
-                disabled
-                className="text-sm px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-default"
-              >
-                Connect Wallet
-              </button>
-            )}
+            <WalletButton />
           </div>
         </div>
       </header>

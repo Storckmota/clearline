@@ -1,8 +1,8 @@
 "use client";
 
 import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import Link from "next/link";
+import { WalletButton } from "../../components/WalletButton";
 import { useEffect, useState } from "react";
 
 function rawToHuman(raw: number | string): string {
@@ -129,16 +129,7 @@ export default function NewReceivable() {
             </Link>
             <span className="text-gray-400 text-sm">New Expected Payment</span>
           </div>
-          {mounted ? (
-            <WalletMultiButton />
-          ) : (
-            <button
-              disabled
-              className="text-sm px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-default"
-            >
-              Connect Wallet
-            </button>
-          )}
+          <WalletButton />
         </div>
       </header>
 
