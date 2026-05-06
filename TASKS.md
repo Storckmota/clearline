@@ -1298,10 +1298,56 @@ Task completed (with warnings): static/API QA passed; browser clipboard/deep-lin
 
 ## 11.4 Manual Resolve UI
 
-- [ ] Show unknown payment details
-- [ ] Select expected payment
-- [ ] Submit to `/api/resolve`
-- [ ] Show updated classification
+- [x] Show unknown payment details
+- [x] Select expected payment
+- [x] Submit to `/api/resolve`
+- [x] Show updated classification
+
+Task completed (build verified; real manual browser verification complete):
+- Task: 11.4 Manual Resolve UI
+- Phase: 11
+- Changed files:
+  - app/page.tsx (ResolvePanel component added; TransactionCard extended with onResolve prop; Home extended with refreshKey + openResolveTxId state; Unknown section renders inline ResolvePanel; useEffect dependency includes refreshKey)
+- Acceptance criteria checked:
+  - Manual Resolution: Resolve button shown only on unknown TransactionCard rows; inline panel with unknown transfer summary (amount, date, sender, recipient, status); selectable receivables list with status badge + label + expected amount; dev secret input (type=password, autoComplete=off, spellCheck=false); POST to /api/resolve with x-dev-secret header + transaction_id + receivable_id in body; 401/400/404/network errors shown inline; panel stays open on error; panel closes + devSecret cleared + inbox refetched on success; Cancel clears all state
+- Security handling:
+  - devSecret stored only in React component state (useState)
+  - devSecret sent only as x-dev-secret request header — never in URL, body, console, error messages
+  - No localStorage or sessionStorage access
+  - devSecret cleared on success, cancel, and component unmount (auto)
+  - Error messages never include the secret value
+  - Secret value not recorded here; entered manually in browser by Julio only
+- Verification (static):
+  - npm run check:classifier — 18/18 passed
+  - npm run lint — clean
+  - npm run build — clean; / is 3.42 kB, all routes confirmed in route table
+- Browser verification (Julio manual — 2026-05-06, http://localhost:3000):
+  - Controlled unknown transaction created: raw devnet USDC transfer without Solana Pay reference
+    - transaction_id: 43e73c95-25cc-4de3-939e-959bbac52391
+    - signature: 3fY2WKCCir66kVvpDWjE9srxzu2snBtmFDKcfhho2vwpUzfEbUkKBFn1gG2boNAJgkctdzC6SjHCTKbHg1KdBFiq
+    - amount: 1 USDC (amount_raw: 1000000)
+    - sender: 92Ak8j9J4HYHmMpSh8UCYBEYwGwaQbUw74HDsZjtRWvy
+    - recipient: 4imzXJrDPSPjdHoo48izKv7K92PxcwCUiZHLZhgAGGBG
+    - classification_reason: Reference not found; RPC fallback failed
+  - Unknown card showed Resolve button ✓
+  - Resolve button opened inline panel ✓
+  - Panel showed unknown payment details (amount, date, sender, recipient, status) ✓
+  - Receivable selection list appeared ✓
+  - Selected Test02 (receivable_id: 47c72a42-eb57-46e2-b75e-bca233a000a3, expected: 1 USDC) ✓
+  - Wrong DEV_SECRET → inline error "Unauthorized: incorrect dev secret." shown; panel stayed open ✓
+  - Correct DEV_SECRET → resolve succeeded ✓
+  - "Payment assigned." shown in panel before close ✓
+  - Inbox refetched: orphan_transactions became [] ✓
+  - Test02 status became paid ✓
+  - Test02 transactions include transaction_id 43e73c95-25cc-4de3-939e-959bbac52391 ✓
+  - Linked transaction status: paid ✓
+  - classification_reason: "Exact match: expected 1 USDC, received 1 USDC, reference matched." ✓
+  - devSecret cleared from clipboard after use; not entered into chat ✓
+- Warnings (non-blocking):
+  - Manual resolve requires DEV_SECRET entered in browser — this is dev/demo-only behavior by design
+  - DEV_SECRET appears in x-dev-secret request header by design (approved security decision)
+  - Production auth is out of scope for MVP
+- Blockers: none
 
 ## 11.5 Proof Page
 

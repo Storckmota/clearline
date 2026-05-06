@@ -119,7 +119,13 @@ function ReceivableCard({ rec }: { rec: ApiReceivable }) {
   );
 }
 
-function TransactionCard({ tx }: { tx: ApiTransaction }) {
+function TransactionCard({
+  tx,
+  onResolve,
+}: {
+  tx: ApiTransaction;
+  onResolve?: () => void;
+}) {
   return (
     <div className="flex items-start justify-between gap-4 px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
       <div className="flex flex-col gap-1 min-w-0">
@@ -139,11 +145,203 @@ function TransactionCard({ tx }: { tx: ApiTransaction }) {
           {fmtDate(tx.observed_at ?? tx.created_at)}
         </span>
       </div>
-      <div className="text-right shrink-0">
+      <div className="text-right shrink-0 flex flex-col items-end gap-2">
         <span className="text-sm font-mono font-medium text-gray-800 dark:text-gray-200">
           {rawToHuman(tx.amount_raw)} USDC
         </span>
+        {tx.status === "unknown" && onResolve && (
+          <button
+            onClick={onResolve}
+            className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+          >
+            Resolve
+          </button>
+        )}
       </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ResolvePanel — inline manual resolve for unknown transactions.
+// devSecret lives only in React state; never persisted, logged, or in body/URL.
+// ---------------------------------------------------------------------------
+function ResolvePanel({
+  tx,
+  receivables,
+  onSuccess,
+  onCancel,
+}: {
+  tx: ApiTransaction;
+  receivables: ApiReceivable[];
+  onSuccess: () => void;
+  onCancel: () => void;
+}) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [devSecret, setDevSecret] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  function handleCancel() {
+    setSelectedId(null);
+    setDevSecret("");
+    setError(null);
+    setSuccess(false);
+    onCancel();
+  }
+
+  async function handleSubmit() {
+    if (!selectedId || !devSecret || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/resolve", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-dev-secret": devSecret,
+        },
+        body: JSON.stringify({
+          transaction_id: tx.id,
+          receivable_id: selectedId,
+        }),
+      });
+      if (res.ok) {
+        setDevSecret("");
+        setSelectedId(null);
+        setError(null);
+        setSuccess(true);
+        setTimeout(onSuccess, 800);
+        return;
+      }
+      let msg = "Unexpected error. Please try again.";
+      if (res.status === 401) {
+        msg = "Unauthorized: incorrect dev secret.";
+      } else if (res.status === 400 || res.status === 404) {
+        try {
+          const data = await res.json() as { error?: string };
+          if (typeof data.error === "string" && data.error) msg = data.error;
+        } catch { /* keep default */ }
+      } else {
+        msg = "Server error. Please try again.";
+      }
+      setError(msg);
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg flex flex-col gap-3">
+      {/* Unknown payment summary */}
+      <div className="flex flex-col gap-0.5 text-xs text-gray-600 dark:text-gray-400">
+        <span className="font-medium text-gray-700 dark:text-gray-300 mb-0.5">
+          Resolve unknown payment
+        </span>
+        <span>
+          <span className="text-gray-500">Amount:</span>{" "}
+          {rawToHuman(tx.amount_raw)} USDC
+        </span>
+        <span>
+          <span className="text-gray-500">Date:</span>{" "}
+          {fmtDate(tx.observed_at ?? tx.created_at)}
+        </span>
+        {tx.sender_wallet && (
+          <span>
+            <span className="text-gray-500">Sender:</span>{" "}
+            {truncateKey(tx.sender_wallet)}
+          </span>
+        )}
+        <span>
+          <span className="text-gray-500">Recipient:</span>{" "}
+          {truncateKey(tx.recipient_wallet)}
+        </span>
+        <span>
+          <span className="text-gray-500">Status:</span> Unknown
+        </span>
+      </div>
+
+      {/* Select expected payment */}
+      <div className="flex flex-col gap-1">
+        <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+          Assign to expected payment
+        </span>
+        {receivables.length === 0 ? (
+          <span className="text-xs text-gray-400">No expected payments found.</span>
+        ) : (
+          <div className="flex flex-col gap-0.5">
+            {receivables.map((rec) => (
+              <label
+                key={rec.id}
+                className="flex items-center gap-2 cursor-pointer px-2 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <input
+                  type="radio"
+                  name={`resolve-${tx.id}`}
+                  value={rec.id}
+                  checked={selectedId === rec.id}
+                  onChange={() => setSelectedId(rec.id)}
+                  className="shrink-0"
+                />
+                <StatusBadge status={rec.display_status} />
+                <span className="text-xs text-gray-700 dark:text-gray-300 truncate flex-1">
+                  {rec.label}
+                </span>
+                <span className="text-xs font-mono text-gray-500 shrink-0">
+                  {rawToHuman(rec.expected_amount_raw)} USDC
+                </span>
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Dev secret input */}
+      <div className="flex flex-col gap-1">
+        <label className="text-xs font-medium text-gray-700 dark:text-gray-300">
+          Dev secret
+        </label>
+        <input
+          type="password"
+          autoComplete="off"
+          spellCheck={false}
+          value={devSecret}
+          onChange={(e) => setDevSecret(e.target.value)}
+          className="text-xs px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-400"
+        />
+        <span className="text-xs text-gray-400">
+          Required for this dev-only resolve action. Not stored by Clearline.
+        </span>
+      </div>
+
+      {/* Success — replaces error + action buttons */}
+      {success ? (
+        <span className="text-xs text-green-600 dark:text-green-400">Payment assigned.</span>
+      ) : (
+        <>
+          {error && (
+            <span className="text-xs text-red-600 dark:text-red-400">{error}</span>
+          )}
+          <div className="flex gap-2">
+            <button
+              onClick={handleSubmit}
+              disabled={!selectedId || !devSecret || submitting}
+              className="text-xs px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {submitting ? "Resolving…" : "Assign payment"}
+            </button>
+            <button
+              onClick={handleCancel}
+              className="text-xs px-3 py-1.5 rounded border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              Cancel
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -185,6 +383,8 @@ export default function Home() {
   const [data, setData] = useState<InboxData | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [openResolveTxId, setOpenResolveTxId] = useState<string | null>(null);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -220,7 +420,7 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, [publicKey]);
+  }, [publicKey, refreshKey]);
 
   // --- Derive inbox groups ---------------------------------------------------
   const receivables = data?.receivables ?? [];
@@ -332,7 +532,27 @@ export default function Home() {
 
                 <Section title="Unknown" count={unknownTxs.length}>
                   {unknownTxs.map((tx) => (
-                    <TransactionCard key={tx.id} tx={tx} />
+                    <div key={tx.id} className="flex flex-col gap-1">
+                      <TransactionCard
+                        tx={tx}
+                        onResolve={() =>
+                          setOpenResolveTxId(
+                            openResolveTxId === tx.id ? null : tx.id
+                          )
+                        }
+                      />
+                      {openResolveTxId === tx.id && (
+                        <ResolvePanel
+                          tx={tx}
+                          receivables={receivables}
+                          onSuccess={() => {
+                            setOpenResolveTxId(null);
+                            setRefreshKey((k) => k + 1);
+                          }}
+                          onCancel={() => setOpenResolveTxId(null)}
+                        />
+                      )}
+                    </div>
                   ))}
                 </Section>
 
