@@ -282,35 +282,38 @@ export default function ReceivableDetail() {
               ) : (
                 <div className="flex flex-col gap-2">
                   {txs.map((tx) => (
-                    <div
+                    <Link
                       key={tx.id}
-                      className="px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg flex flex-col gap-1"
+                      href={`/tx/${tx.signature}`}
+                      className="block hover:opacity-80 transition-opacity"
                     >
-                      <div className="flex items-center justify-between gap-4 flex-wrap">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <StatusBadge status={tx.status} />
-                          <span className="text-sm font-mono font-medium text-gray-800 dark:text-gray-200">
-                            {rawToHuman(tx.amount_raw)} USDC
+                      <div className="px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg flex flex-col gap-1">
+                        <div className="flex items-center justify-between gap-4 flex-wrap">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <StatusBadge status={tx.status} />
+                            <span className="text-sm font-mono font-medium text-gray-800 dark:text-gray-200">
+                              {rawToHuman(tx.amount_raw)} USDC
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-400">
+                            {fmtDate(tx.observed_at ?? tx.created_at)}
                           </span>
                         </div>
-                        <span className="text-xs text-gray-400">
-                          {fmtDate(tx.observed_at ?? tx.created_at)}
-                        </span>
+                        {tx.classification_reason && tx.classification_reason !== "Unclassified" && (
+                          <span className="text-xs text-gray-500 italic">
+                            {tx.classification_reason}
+                          </span>
+                        )}
+                        <div className="flex flex-wrap gap-x-4 gap-y-0.5">
+                          <span className="text-xs text-gray-400">
+                            From: {truncateKey(tx.sender_wallet)}
+                          </span>
+                          <span className="text-xs text-gray-400">
+                            To: {truncateKey(tx.recipient_wallet)}
+                          </span>
+                        </div>
                       </div>
-                      {tx.classification_reason && tx.classification_reason !== "Unclassified" && (
-                        <span className="text-xs text-gray-500 italic">
-                          {tx.classification_reason}
-                        </span>
-                      )}
-                      <div className="flex flex-wrap gap-x-4 gap-y-0.5">
-                        <span className="text-xs text-gray-400">
-                          From: {truncateKey(tx.sender_wallet)}
-                        </span>
-                        <span className="text-xs text-gray-400">
-                          To: {truncateKey(tx.recipient_wallet)}
-                        </span>
-                      </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

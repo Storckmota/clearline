@@ -1357,14 +1357,48 @@ Route:
 
 Show:
 
-- [ ] Transaction signature
-- [ ] Amount
-- [ ] Sender wallet
-- [ ] Recipient wallet
-- [ ] Status
-- [ ] Classification reason
-- [ ] Linked expected payment
-- [ ] Solana Explorer link
+- [x] Transaction signature
+- [x] Amount
+- [x] Sender wallet
+- [x] Recipient wallet
+- [x] Status
+- [x] Classification reason
+- [x] Linked expected payment
+- [x] Solana Explorer link
+
+Task completed (API verified; Julio browser verification complete for linked proof flow; inbox orphan proof link, Resolve button, and "Not linked." fallback not testable because current DB has 0 orphan transactions):
+- Task: 11.5 Proof Page
+- Phase: 11
+- Changed files:
+  - app/api/transactions/[signature]/route.ts (created)
+  - app/tx/[signature]/page.tsx (created)
+  - app/receivables/[id]/page.tsx (linked tx rows wrapped in Link to /tx/[signature])
+  - app/page.tsx (TransactionCard: "View proof →" link added)
+- Acceptance criteria checked:
+  - Proof Page (§18): all 8 fields present; reads from Supabase only; no RPC; classification_reason displayed; linked receivable shown when present, "Not linked." when absent
+- Verification (API):
+  - npm run lint — clean
+  - npx tsc --noEmit — clean
+  - npm run build — clean; ƒ /tx/[signature] and ƒ /api/transactions/[signature] both in route table
+  - GET /api/transactions/3fY2WKCCir… → 200; all fields present; receivable={id, label, expected_amount_raw, due_date, status}; explorer_url=https://explorer.solana.com/tx/…?cluster=devnet ✓
+  - GET /api/transactions/3w2TJ6JA7T… → 200; second linked tx confirmed; receivable linked correctly ✓
+  - GET /api/transactions/totallyFakeSignatureXYZ → 404 ✓
+  - GET /tx/{known_signature} HTTP → 200; HTML shell includes "Transaction Proof" and "Back to Inbox" ✓
+  - GET /receivables/[id] HTTP → 200 ✓
+  - GET / HTTP → 200 ✓
+- Signatures used for verification:
+  - 3fY2WKCCir… (Test02, paid, linked receivable) — primary
+  - 3w2TJ6JA7T… (Phase 9 matched reference test, paid, linked receivable) — secondary
+- Browser verification status:
+  - Proof page renders all 8 fields correctly in browser — verified by Julio
+  - Linked Expected Payment section visible with correct label/amount/link — verified by Julio
+  - "View expected payment →" link navigates to /receivables/[id] — verified by Julio
+  - Linked tx rows in receivable detail page navigate to /tx/[signature] — verified by Julio
+  - Solana Explorer link opens in new tab with ?cluster=devnet URL — verified by Julio
+  - "View proof →" in inbox TransactionCard — not testable; current DB has 0 orphan transactions and no visible duplicate transaction cards
+  - Resolve button behavior — not testable; current DB has 0 orphan transactions
+  - "Not linked." fallback — not testable without creating a new unknown/unlinked transaction; intentionally deferred
+- Blockers: none for commit
 
 ---
 

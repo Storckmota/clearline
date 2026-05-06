@@ -157,6 +157,12 @@ function TransactionCard({
             Resolve
           </button>
         )}
+        <Link
+          href={`/tx/${tx.signature}`}
+          className="text-xs text-gray-400 hover:underline"
+        >
+          View proof →
+        </Link>
       </div>
     </div>
   );
