@@ -92,25 +92,30 @@ interface InboxData {
 // ---------------------------------------------------------------------------
 function ReceivableCard({ rec }: { rec: ApiReceivable }) {
   return (
-    <div className="flex items-start justify-between gap-4 px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
-      <div className="flex flex-col gap-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <StatusBadge status={rec.display_status} />
-          <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-            {rec.label}
+    <Link
+      href={`/receivables/${rec.id}`}
+      className="block hover:opacity-80 transition-opacity"
+    >
+      <div className="flex items-start justify-between gap-4 px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <div className="flex flex-col gap-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <StatusBadge status={rec.display_status} />
+            <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+              {rec.label}
+            </span>
+          </div>
+          {rec.due_date && (
+            <span className="text-xs text-gray-500">Due {fmtDate(rec.due_date)}</span>
+          )}
+          <span className="text-xs text-gray-400">Created {fmtDate(rec.created_at)}</span>
+        </div>
+        <div className="text-right shrink-0">
+          <span className="text-sm font-mono font-medium text-gray-800 dark:text-gray-200">
+            {rawToHuman(rec.expected_amount_raw)} USDC
           </span>
         </div>
-        {rec.due_date && (
-          <span className="text-xs text-gray-500">Due {fmtDate(rec.due_date)}</span>
-        )}
-        <span className="text-xs text-gray-400">Created {fmtDate(rec.created_at)}</span>
       </div>
-      <div className="text-right shrink-0">
-        <span className="text-sm font-mono font-medium text-gray-800 dark:text-gray-200">
-          {rawToHuman(rec.expected_amount_raw)} USDC
-        </span>
-      </div>
-    </div>
+    </Link>
   );
 }
 

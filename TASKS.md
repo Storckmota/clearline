@@ -1248,13 +1248,53 @@ Route:
 
 Show:
 
-- [ ] Label
-- [ ] Expected amount
-- [ ] Status
-- [ ] Due date
-- [ ] Solana Pay link
-- [ ] Linked transactions
-- [ ] Classification reasons
+- [x] Label
+- [x] Expected amount
+- [x] Status
+- [x] Due date
+- [x] Solana Pay link
+- [x] Linked transactions
+- [x] Classification reasons
+
+Task completed (with warnings): static/API QA passed; browser clipboard/deep-link testing deferred.
+- Task: 11.3 Expected Payment Detail
+- Phase: 11
+- Changed files:
+  - app/receivables/[id]/page.tsx (created)
+  - app/page.tsx (ReceivableCard wrapped in Link to /receivables/${rec.id})
+- Acceptance criteria checked:
+  - Payment Inbox UI: /receivables/[id] exists; all 7 fields shown; payment link before matching reference; microcopy matches Phase 11.2 pattern; linked transfers section with empty-state; no forbidden scope
+  - No forbidden scope: no edit/delete/QR/resolve UI/onboarding/charts/RPC calls
+- Verification completed (non-browser):
+  - npm run check:classifier — 18/18 passed
+  - npm run lint — clean
+  - npm run build — clean; ƒ /receivables/[id] confirmed in route table
+  - GET /receivables/new — 200 ✓ (static route unaffected, takes priority over [id])
+  - GET /receivables/00000000-0000-0000-0000-000000000000 — 200 (page renders, useEffect maps 404 API response → notFound state) ✓
+  - GET /receivables/not-a-uuid — 200 (page renders, useEffect maps 400 API response → notFound state) ✓
+  - GET /api/receivables/00000000-0000-0000-0000-000000000000 — {"error":"Not found."} ✓
+  - GET /api/receivables/not-a-uuid — {"error":"Invalid id format."} ✓
+- Browser verification (Julio manual — 2026-05-06):
+  - Inbox receivable cards are clickable and navigate to /receivables/[id] ✓
+  - Pending detail ("AI Browser QA 11.2"): Payment link, Matching reference, and empty linked-transfers state all visible ✓
+  - Paid detail ("Phase 9 matched reference test"): Payment link, Matching reference, Linked transfers section, and classification reason all visible ✓
+  - Wallet switching / connection behavior verified OK ✓
+- Warnings / deferred verification:
+  - W1: Copy-to-clipboard "Copied" feedback not deeply verified in browser
+  - W2: Solana Pay deep-link/QR validation not part of Phase 11.3 scope
+  - W3: Hover states, dark mode, and mobile layout not manually verified
+- Deferred (Phase 11.5):
+  - Linked transfer cards are not clickable in 11.3 by design
+  - Linked transfer click-through belongs to Phase 11.5 proof/transaction detail
+- Key design notes:
+  - No wallet connection required to view detail — fetch is by ID only
+  - WalletMultiButton present in header with mounted guard (hydration-safe)
+  - BigInt-safe rawToHuman inline — no server-only lib/usdc.ts import
+  - 404 and 400 from API both mapped to notFound state (not-found page text)
+  - cancelled flag prevents state update on unmount
+  - payment link shown before matching reference (payer-facing first)
+  - TransactionCard in inbox NOT made clickable — /tx/[signature] is Phase 11.5
+- Blockers: none
 
 ## 11.4 Manual Resolve UI
 
