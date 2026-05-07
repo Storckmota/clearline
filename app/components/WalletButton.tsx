@@ -84,12 +84,10 @@ export function WalletButton() {
 
   function handleConnectClick() {
     if (wallet && !connecting) {
-      // Wallet already selected but disconnected — connect directly.
       setConnectRequested(true);
       connect().catch(() => setConnectRequested(false));
       return;
     }
-    // No wallet selected — open modal and mark intent to connect after selection.
     setConnectRequested(true);
     setVisible(true);
   }
@@ -98,7 +96,7 @@ export function WalletButton() {
     return (
       <button
         disabled
-        className="text-sm px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-default"
+        className="text-sm px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-default font-medium select-none"
       >
         Connecting…
       </button>
@@ -109,7 +107,7 @@ export function WalletButton() {
     return (
       <button
         onClick={handleConnectClick}
-        className="text-sm px-4 py-2 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-200"
+        className="text-sm px-4 py-2 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium hover:bg-gray-700 dark:hover:bg-gray-100 active:scale-95 transition-all duration-150 shadow-sm cursor-pointer select-none"
       >
         Connect
       </button>
@@ -131,9 +129,6 @@ export function WalletButton() {
 
   function handleChangeWallet() {
     setMenuOpen(false);
-    // Disconnect first so wallet clears to null before we open the modal.
-    // connectRequested is set after disconnect resolves so the auto-connect
-    // effect fires only on the new wallet selection, not the old adapter.
     void disconnect()
       .catch(() => {})
       .then(() => {
@@ -153,28 +148,28 @@ export function WalletButton() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setMenuOpen((o) => !o)}
-        className="text-sm px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-mono hover:bg-gray-200 dark:hover:bg-gray-700"
+        className="text-sm px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-mono hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
       >
         {copied ? "Copied!" : `${a.slice(0, 4)}…${a.slice(-4)}`}
       </button>
 
       {menuOpen && (
-        <div className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-50 overflow-hidden">
           <button
             onClick={handleCopy}
-            className="w-full text-left text-sm px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+            className="w-full text-left text-sm px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             Copy address
           </button>
           <button
             onClick={handleChangeWallet}
-            className="w-full text-left text-sm px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+            className="w-full text-left text-sm px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             Change wallet
           </button>
           <button
             onClick={handleDisconnect}
-            className="w-full text-left text-sm px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
+            className="w-full text-left text-sm px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors"
           >
             Disconnect
           </button>

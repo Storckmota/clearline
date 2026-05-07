@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { WalletButton } from "../../components/WalletButton";
+import { ThemeToggle } from "../../components/ThemeToggle";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -150,32 +151,44 @@ export default function TransactionProof() {
   const explorerUrl = data?.explorer_url ?? null;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans">
+    <div className="min-h-screen bg-white dark:bg-[#06090f] font-sans">
       {/* Header */}
-      <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black px-6 py-4">
+      <header className="border-b border-gray-200/80 dark:border-gray-800/80 bg-white/90 dark:bg-[#06090f]/90 backdrop-blur-sm sticky top-0 z-40 px-4 sm:px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="text-base font-semibold text-gray-900 dark:text-gray-100 hover:underline"
+              className="text-lg font-semibold text-gray-900 dark:text-gray-100 hover:underline"
             >
               Clearline
             </Link>
             <span className="text-gray-400 text-sm">Transaction Proof</span>
           </div>
-          <WalletButton />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <WalletButton />
+          </div>
         </div>
       </header>
 
       {/* Body */}
       <main className="max-w-2xl mx-auto px-6 py-8 flex flex-col gap-6">
-        <Link href="/" className="text-xs text-gray-500 hover:underline self-start">
-          Back to Inbox
+        <Link
+          href="/"
+          className="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium transition-all duration-150 hover:-translate-y-0.5 active:scale-95 cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-white/90 dark:text-slate-950 dark:hover:bg-white self-start mb-2"
+        >
+          ← Back to Inbox
         </Link>
 
         {/* Loading */}
         {loading && (
-          <div className="text-center py-16 text-gray-400 text-sm">Loading…</div>
+          <div className="flex flex-col items-center justify-center py-16 gap-3">
+            <svg className="h-5 w-5 animate-spin text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-label="Loading">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <span className="text-xs text-gray-400">Loading proof</span>
+          </div>
         )}
 
         {/* Not found */}
@@ -202,19 +215,24 @@ export default function TransactionProof() {
                   {rawToHuman(tx.amount_raw)} USDC
                 </span>
               </div>
+              {tx.classification_reason && tx.classification_reason !== "Unclassified" && (
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {tx.classification_reason}
+                </p>
+              )}
               <span className="text-xs text-gray-400">
                 {fmtDate(tx.observed_at ?? tx.created_at)}
               </span>
-            </div>
-
-            {/* Classification */}
-            <div className="px-4 py-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg flex flex-col gap-2">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
-                Classification
-              </span>
-              <p className="text-sm text-gray-700 dark:text-gray-300 italic">
-                {tx.classification_reason || "Not classified."}
-              </p>
+              {explorerUrl && (
+                <a
+                  href={explorerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="self-start text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline underline-offset-2"
+                >
+                  View on Solana Explorer →
+                </a>
+              )}
             </div>
 
             {/* Transaction details */}
@@ -274,7 +292,7 @@ export default function TransactionProof() {
                   </span>
                   <Link
                     href={`/receivables/${rec.id}`}
-                    className="text-xs text-gray-500 hover:underline self-start"
+                    className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline self-start"
                   >
                     View expected payment →
                   </Link>
@@ -284,17 +302,6 @@ export default function TransactionProof() {
               )}
             </div>
 
-            {/* Solana Explorer link */}
-            {explorerUrl && (
-              <a
-                href={explorerUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="self-start text-xs px-3 py-1.5 rounded border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-              >
-                View on Solana Explorer →
-              </a>
-            )}
 
           </div>
         )}

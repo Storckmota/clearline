@@ -4,6 +4,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import Link from "next/link";
 import QRCode from "react-qr-code";
 import { WalletButton } from "../../components/WalletButton";
+import { ThemeToggle } from "../../components/ThemeToggle";
 import { useEffect, useState } from "react";
 
 function rawToHuman(raw: number | string): string {
@@ -117,27 +118,33 @@ export default function NewReceivable() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans">
+    <div className="min-h-screen bg-white dark:bg-[#06090f] font-sans">
       {/* Header */}
-      <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black px-6 py-4">
+      <header className="border-b border-gray-200/80 dark:border-gray-800/80 bg-white/90 dark:bg-[#06090f]/90 backdrop-blur-sm sticky top-0 z-40 px-4 sm:px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="text-base font-semibold text-gray-900 dark:text-gray-100 hover:underline"
+              className="text-lg font-semibold text-gray-900 dark:text-gray-100 hover:underline"
             >
               Clearline
             </Link>
             <span className="text-gray-400 text-sm">New Expected Payment</span>
           </div>
-          <WalletButton />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <WalletButton />
+          </div>
         </div>
       </header>
 
       {/* Body */}
       <main className="max-w-2xl mx-auto px-6 py-8 flex flex-col gap-6">
-        <Link href="/" className="text-xs text-gray-500 hover:underline self-start">
-          Back to Inbox
+        <Link
+          href="/"
+          className="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium transition-all duration-150 hover:-translate-y-0.5 active:scale-95 cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-white/90 dark:text-slate-950 dark:hover:bg-white self-start mb-2"
+        >
+          ← Back to Inbox
         </Link>
 
         {/* Not connected */}
@@ -289,7 +296,7 @@ export default function NewReceivable() {
                   type="text"
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
-                  placeholder="Website project"
+                  placeholder="What is this payment for?"
                   disabled={submitting}
                   className="text-sm border border-gray-200 dark:border-gray-700 rounded-md px-3 py-2 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 disabled:opacity-50"
                 />
@@ -308,7 +315,7 @@ export default function NewReceivable() {
                   inputMode="decimal"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  placeholder="100"
+                  placeholder="Expected USDC amount"
                   disabled={submitting}
                   className="text-sm font-mono border border-gray-200 dark:border-gray-700 rounded-md px-3 py-2 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 disabled:opacity-50"
                 />
@@ -330,6 +337,7 @@ export default function NewReceivable() {
                   disabled={submitting}
                   className="text-sm border border-gray-200 dark:border-gray-700 rounded-md px-3 py-2 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-400 disabled:opacity-50"
                 />
+                <span className="text-xs text-gray-400">Optional due date for tracking overdue payments.</span>
               </div>
 
               {formError && (
