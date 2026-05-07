@@ -1490,22 +1490,68 @@ Relevant acceptance criteria:
 
 Before recording or submitting:
 
-- [ ] Receiving wallet has devnet SOL
-- [ ] Payer wallet has devnet SOL
-- [ ] Payer wallet has devnet USDC
-- [ ] Receiving wallet USDC ATA exists
-- [ ] `RECIPIENT_WALLET` env var is correct
-- [ ] `RECIPIENT_USDC_ATA` env var is correct
-- [ ] Helius webhook points to live Vercel/ngrok URL
-- [ ] Helius monitors wallet and USDC ATA
-- [ ] Exact payment works
-- [ ] Partial payment works
-- [ ] Overpaid payment works
-- [ ] Unknown transfer works
-- [ ] Duplicate payment works
-- [ ] Replay endpoint works
-- [ ] Proof page works
-- [ ] Demo can be completed in under 3 minutes
+- [x] Receiving wallet has devnet SOL (5 SOL — confirmed 2026-05-07)
+- [x] Payer wallet has devnet SOL (0.04993 SOL — confirmed 2026-05-07)
+- [x] Payer wallet has devnet USDC (15.499 USDC — confirmed 2026-05-07)
+- [x] Receiving wallet USDC ATA exists (CaUARQQrc4umBbq8ewYQkkhovgJLKCw1LHdeM6Hrbv6F — confirmed)
+- [x] `RECIPIENT_WALLET` env var is correct (matched configured merchant wallet — confirmed in Vercel env)
+- [x] `RECIPIENT_USDC_ATA` env var is correct (matched configured merchant USDC ATA — confirmed in Vercel env)
+- [x] Helius webhook points to live Vercel/ngrok URL (https://clearline-lovat.vercel.app/api/webhooks/helius — restored and confirmed)
+- [x] Helius monitors wallet and USDC ATA (wallet: 4imzXJrDPSPjdHoo48izKv7K92PxcwCUiZHLZhgAGGBG; ATA: CaUARQQrc4umBbq8ewYQkkhovgJLKCw1LHdeM6Hrbv6F — manually confirmed in Helius dashboard)
+- [x] Exact payment works (sig=5noPgVe2… → status=paid, linked: Fixture: Exact Payment — local API + browser verified)
+- [x] Partial payment works (sig=chRxiw1M… → status=partial, linked: Fixture: Partial Payment — local API + browser verified)
+- [x] Overpaid payment works (sig=56FdKf68… → status=overpaid, linked: Fixture: Overpaid Payment — local API + browser verified)
+- [x] Unknown transfer works (sig=mtH4nuSX… → status=unknown, receivable=null — local API + browser verified)
+- [x] Duplicate payment works (sig=5Gp6mYYa… → status=duplicate, linked: Fixture: Exact Payment — local API + browser verified)
+- [x] Replay endpoint works (production wrong-secret → 401 confirmed; Phase 12.2 all 5 fixtures replayed and verified end-to-end)
+- [x] Proof page works (production GET /tx/5noPgVe2… → 200; all 8 fields, Explorer devnet link, linked receivable — browser verified)
+- [ ] Demo can be completed in under 3 minutes (dry run timer pending — do not mark complete until exact time is recorded)
+
+Task progress note (2026-05-07):
+- Task: 13 Pre-Demo Checklist
+- Phase: 13
+- Verification grouped below; no secrets recorded.
+
+**Environment / production:**
+- git working tree was clean before Phase 13 checks
+- RECIPIENT_WALLET and RECIPIENT_USDC_ATA confirmed correct in Vercel env
+- DEV_SECRET was rotated after accidental local terminal exposure; production replay endpoint confirmed 401 on wrong secret; correct DEV_SECRET confirmed working — DEV_SECRET value not recorded here
+- Production routes confirmed: GET / → 200, GET /receivables/new → 200, GET /tx/5noPgVe2… → 200
+- Helius webhook restored to https://clearline-lovat.vercel.app/api/webhooks/helius
+
+**Wallet / on-chain readiness:**
+- Receiving wallet (4imzXJrDPSPjdHoo48izKv7K92PxcwCUiZHLZhgAGGBG): 5 SOL
+- Payer wallet (EqEsgzFfhxfUmEatpZduT6D9A3oJMv9DdZUWbZcubg9V): 0.04993 SOL, 15.499 USDC
+- Receiving wallet USDC ATA (CaUARQQrc4umBbq8ewYQkkhovgJLKCw1LHdeM6Hrbv6F): exists, 5.56 USDC balance
+
+**Classification / API:**
+- Local API GET /api/transactions/{sig} returned HTTP 200 for all 5 fixture signatures
+  - sig=5noPgVe2… → status=paid, linked: Fixture: Exact Payment
+  - sig=chRxiw1M… → status=partial, linked: Fixture: Partial Payment
+  - sig=56FdKf68… → status=overpaid, linked: Fixture: Overpaid Payment
+  - sig=mtH4nuSX… → status=unknown, receivable=null
+  - sig=5Gp6mYYa… → status=duplicate, linked: Fixture: Exact Payment
+- All 5 classifications confirmed by Phase 12.2 replay and API verification
+
+**Browser / proof pages:**
+- Production inbox rendered with all classification sections visible: unknown, partial, overpaid, duplicate, paid
+- Exact receivable detail showed linked transfers: paid + duplicate — correct
+- Duplicate proof page: works; showed linked expected payment
+- Unknown proof page: works; showed "Not linked"
+- All proof page fields confirmed: signature, status, amount, sender, recipient, classification reason, Solana Explorer devnet link
+- /receivables/new: QR code rendered after creating expected payment; copy payment link worked
+- Header/inbox copy confirmed: "Monitoring devnet merchant wallet: 4imzXJ…GGBG"
+- Manual Resolve UI: wording softened to "Admin demo key" — confirmed in browser
+
+**Docs / submission readiness:**
+- README.md rewritten and committed in ff1550d — covers single-merchant model, Helius monitoring, Solana Pay references, replay fixtures, known limitations, future multi-merchant architecture
+- DEMO.md created and committed in ff1550d — covers pre-demo checklist, under-3-minute demo path, backup replay path (disposable demo state only), proof page signatures, what NOT to show
+- Colosseum Copilot reviewed docs and approved with wording notes; all fixes applied before commit
+- No secrets recorded in TASKS.md
+
+**Remaining:**
+- Demo dry run timer still needs exact recorded time before final video. "Demo can be completed in under 3 minutes" left unchecked until time is confirmed.
+- Blockers: none
 
 ---
 
