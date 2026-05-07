@@ -2,6 +2,7 @@
 
 import { useWallet } from "@solana/wallet-adapter-react";
 import Link from "next/link";
+import QRCode from "react-qr-code";
 import { WalletButton } from "../../components/WalletButton";
 import { useEffect, useState } from "react";
 
@@ -197,6 +198,16 @@ export default function NewReceivable() {
               </div>
 
               <div className="flex flex-col gap-3 pt-2 border-t border-gray-100 dark:border-gray-800">
+                {/* QR Code */}
+                <div className="flex flex-col items-center gap-2 py-2">
+                  <div className="p-3 bg-white rounded-lg border border-gray-100">
+                    <QRCode value={created.solana_pay_url} size={180} />
+                  </div>
+                  <span className="text-xs text-gray-400">
+                    Scan with a Solana Pay wallet (Phantom · Solflare)
+                  </span>
+                </div>
+
                 {/* Payment link */}
                 <div className="flex flex-col gap-2">
                   <div className="flex flex-col gap-0.5">

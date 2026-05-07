@@ -223,7 +223,7 @@ function ResolvePanel({
       }
       let msg = "Unexpected error. Please try again.";
       if (res.status === 401) {
-        msg = "Unauthorized: incorrect dev secret.";
+        msg = "Unauthorized: incorrect admin key.";
       } else if (res.status === 400 || res.status === 404) {
         try {
           const data = await res.json() as { error?: string };
@@ -305,10 +305,10 @@ function ResolvePanel({
         )}
       </div>
 
-      {/* Dev secret input */}
+      {/* Admin demo key input */}
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-gray-700 dark:text-gray-300">
-          Dev secret
+          Admin demo key
         </label>
         <input
           type="password"
@@ -319,7 +319,7 @@ function ResolvePanel({
           className="text-xs px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-400"
         />
         <span className="text-xs text-gray-400">
-          Required for this dev-only resolve action. Not stored by Clearline.
+          Required for this demo admin action. Not stored by Clearline.
         </span>
       </div>
 
@@ -459,16 +459,21 @@ export default function Home() {
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-              Clearline
-            </h1>
-            <span className="text-gray-400 text-sm">Payment Inbox</span>
-            {attentionCount > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
-                {attentionCount} need attention
-              </span>
-            )}
+          <div className="flex flex-col gap-0.5">
+            <div className="flex items-center gap-3">
+              <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                Clearline
+              </h1>
+              <span className="text-gray-400 text-sm">Payment Inbox</span>
+              {attentionCount > 0 && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                  {attentionCount} need attention
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-gray-400">
+              Monitoring devnet merchant wallet: 4imzXJ…GGBG
+            </p>
           </div>
           <div className="flex items-center gap-2">
             {mounted && publicKey && (
