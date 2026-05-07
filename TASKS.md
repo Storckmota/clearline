@@ -1426,25 +1426,27 @@ Fixtures:
 
 These should come from real Helius payloads whenever possible.
 
-Task completed (all 5 fixtures validated — 2026-05-06):
+Task completed (all 5 fixtures validated — 2026-05-06; unknown-payment.json replaced 2026-05-06):
 - Task: 12.1 Saved Fixtures
 - Phase: 12
 - Changed files:
-  - fixtures/helius/unknown-payment.json (created — Phase 12.1 partial pass)
+  - fixtures/helius/unknown-payment.json (replaced — new no-reference capture; old 3oSgDJPb… was invalid for Phase 12.2 because RPC fallback matched a reference in Supabase)
   - fixtures/helius/exact-payment.json (captured by Julio via ngrok)
   - fixtures/helius/partial-payment.json (captured by Julio via ngrok)
   - fixtures/helius/overpaid-payment.json (captured by Julio via ngrok)
   - fixtures/helius/duplicate-payment.json (captured by Julio via ngrok)
+  - fixtures/helius/raw-capture.json (retained, not deleted — no longer used as unknown-payment.json)
 - Validation method: Read each file; confirmed valid JSON, Helius array shape, signature present, no secrets (Authorization/DEV_SECRET/service_role/private/secret/HELIUS_AUTH_TOKEN)
 - Scenario evidence:
   - exact: sig=5noPgVe2…; 5 instruction accounts; 5th key=24Dy5ATaiztEmYtd33hXpeY1SeY218Wk8nLyfdZE5Fkx (reference); raw 1000000 (1 USDC)
   - partial: sig=chRxiw1M…; 5 instruction accounts; 5th key=HgEqEGTJZnG1mhmz2V1xVWpWz28DuANSjXN5rviehU3B (reference); raw 500000 (0.5 USDC)
   - overpaid: sig=56FdKf68…; 5 instruction accounts; 5th key=HjoV3TadQHhq8we4nhWJAwh83ztfRu1erQpaN3eWxYBb (reference); raw 2000000 (2 USDC)
-  - unknown: sig=3oSgDJPb…; 4 instruction accounts only; no 5th reference key; raw 1000 (0.001 USDC); source=raw-capture.json
+  - unknown: sig=mtH4nuSX…; 4 instruction accounts only (sender ATA, USDC mint, recipient ATA, sender wallet); no 5th reference key; none of the 3 known reference pubkeys present; raw 1000 (0.001 USDC); slot 460593839; real new Helius capture confirmed (different slot/timestamp from raw-capture.json)
   - duplicate: sig=5Gp6mYYa…; 5 instruction accounts; 5th key=24Dy5ATaiztEmYtd33hXpeY1SeY218Wk8nLyfdZE5Fkx (same reference as exact, different signature); raw 1000000 (1 USDC)
 - All 5 fixtures are real Helius enhanced payload captures — no handcrafted data
+- Note on unknown-payment.json replacement capture: local webhook route logged "Non-JSON body — returning 200 to suppress Helius retries" during capture, so live Supabase ingestion was not confirmed for this signature. File-level validation passes (JSON valid, no reference key, correct shape). Phase 12.2 replay will verify ingestion and classification end-to-end.
 - Blockers for Phase 12.2:
-  - Before replay, delete transaction rows for all captured signatures from Supabase to avoid duplicate_sig on replay
+  - Before replay, delete transaction rows for all 5 fixture signatures from Supabase to avoid duplicate_sig on replay
   - Duplicate replay additionally requires the matching expected payment (ref 24Dy5AT…) to be in paid status at replay time
 
 ## 12.2 Replay Tests
