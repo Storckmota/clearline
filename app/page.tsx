@@ -148,7 +148,7 @@ function HeroPreview() {
 function ReceivableCard({ rec }: { rec: ApiReceivable }) {
   return (
     <Link href={`/receivables/${rec.id}`} className="block group">
-      <div className="flex flex-col gap-1 px-3 py-2.5 bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-700/50 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:scale-[1.01] hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-150">
+      <div className="flex flex-col gap-1 px-3 py-3 min-h-[128px] bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-700/50 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:scale-[1.01] hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-150">
         <div className="flex items-center gap-2 flex-wrap">
           <StatusBadge status={rec.display_status} />
           <span className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">
@@ -174,33 +174,35 @@ function TransactionCard({
   onResolve?: () => void;
 }) {
   return (
-    <div className="flex flex-col gap-1 px-3 py-2.5 bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-700/50 rounded-xl shadow-sm">
-      <div className="flex items-center gap-2 flex-wrap">
-        <StatusBadge status={tx.status} />
-        <span className="text-xs font-mono text-gray-500 dark:text-gray-400">
-          {rawToHuman(tx.amount_raw)} USDC
+    <div className="flex flex-col justify-between gap-1 px-3 py-3 min-h-[128px] bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-700/50 rounded-xl shadow-sm">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2 flex-wrap">
+          <StatusBadge status={tx.status} />
+          <span className="text-xs font-mono text-gray-500 dark:text-gray-400">
+            {rawToHuman(tx.amount_raw)} USDC
+          </span>
+        </div>
+        <span className="text-xs text-gray-600 dark:text-gray-400">
+          {tx.classification_reason && tx.classification_reason !== "Unclassified"
+            ? tx.classification_reason
+            : "Incoming transfer"}
+        </span>
+        <span className="text-xs text-gray-400 dark:text-gray-500">
+          From: {truncateKey(tx.sender_wallet)}
         </span>
       </div>
-      <span className="text-xs text-gray-600 dark:text-gray-400">
-        {tx.classification_reason && tx.classification_reason !== "Unclassified"
-          ? tx.classification_reason
-          : "Incoming transfer"}
-      </span>
-      <span className="text-xs text-gray-400 dark:text-gray-500">
-        From: {truncateKey(tx.sender_wallet)}
-      </span>
-      <div className="flex items-center gap-2 mt-0.5">
+      <div className="flex flex-wrap items-center gap-1.5 mt-2">
         {tx.status === "unknown" && onResolve && (
           <button
             onClick={onResolve}
-            className="text-xs px-2 py-0.5 rounded-md border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 hover:shadow-sm active:scale-95 transition-all duration-150"
           >
             Resolve
           </button>
         )}
         <Link
           href={`/tx/${tx.signature}`}
-          className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+          className="inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-500 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 hover:-translate-y-0.5 active:scale-95 transition-all duration-150"
         >
           View proof →
         </Link>
@@ -390,7 +392,7 @@ const STATUS_GUIDE = [
 function StatusGuide() {
   const [open, setOpen] = useState(true);
   return (
-    <div className="px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-700/50 rounded-xl shadow-md flex flex-col gap-2">
+    <div className="px-5 py-4 bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-700/50 rounded-xl shadow-md flex flex-col gap-3">
       <button
         onClick={() => setOpen((v) => !v)}
         className="flex items-center justify-between w-full text-left"
@@ -405,7 +407,7 @@ function StatusGuide() {
           <p className="text-xs text-gray-400 dark:text-gray-500">
             Monitoring devnet merchant wallet: 4imzXJ…GGBG
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
             {STATUS_GUIDE.map(({ status, desc }) => (
               <div key={status} className="flex items-center gap-3">
                 <StatusBadge status={status} />
